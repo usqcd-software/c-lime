@@ -1,3 +1,10 @@
+01/07/2005 -- Carleton Detar
+
+	Version 1.1. Add a variety of LIME utilities. Add LIME
+	documentation. Change LIME file byte counter types to off_t and
+	change QIO/LRL to conform. Update QIO documentation. A little
+	housekeeping.
+
 11/01/2004 -- Carleton Detar
 
 	Version 1.1.0. New support for QIO.
