@@ -7,6 +7,7 @@
 #include "lime_binary_header.h"
 #include "lime_utils.h"
 
+#undef LIME_DEBUG
 
 /* This is suppose to be the standard prototype for fseeko */
 int fseeko(FILE *stream, off_t offset, int whence);
@@ -21,7 +22,7 @@ LimeWriter* limeCreateWriter(FILE *fp)
 {
   LimeWriter* ret_val;
 
-#ifdef DEBUG
+#ifdef LIME_DEBUG
   fprintf(stderr, "Initialising LIME Generator\n");
 #endif
   ret_val = (LimeWriter *)malloc(sizeof(LimeWriter));
@@ -46,13 +47,13 @@ int limeDestroyWriter(LimeWriter *s)
   LimeRecordHeader *h;
   int status;
   size_t nbytes = 0;
-#ifdef DEBUG
+#ifdef LIME_DEBUG
   fprintf(stderr, "Closing Lime Generator\n");
 #endif
 
   if( s->last_written != 1 ) { 
 
-#ifdef DEBUG
+#ifdef LIME_DEBUG
     fprintf(stderr, "Writing empty last record\n");
 #endif
     /* Writing a last empty record */
@@ -84,13 +85,13 @@ int limeWriteRecordHeader( LimeRecordHeader *props, int do_write,
 
   int ret_val;
 
-#ifdef DEBUG 
+#ifdef LIME_DEBUG 
   fprintf(stderr, "In limeWriteRecordHeader\n");
   fflush(stderr);
 #endif
 
   if( d == (LimeWriter *)NULL ) { 
-#ifdef DEBUG
+#ifdef LIME_DEBUG
     fprintf(stderr, "d is NULL\n");
     fflush(stderr);
 #endif
@@ -98,7 +99,7 @@ int limeWriteRecordHeader( LimeRecordHeader *props, int do_write,
   }
 
   if( props == (LimeRecordHeader *)NULL ) { 
-#ifdef DEBUG
+#ifdef LIME_DEBUG
     fprintf(stderr, "props is NULL\n");
     fflush(stderr);
 #endif
@@ -144,7 +145,7 @@ int limeWriteRecordData( void *source, size_t *nbytes,
   unsigned char padbuf[7] = {0x00,0x00,0x00,0x00,0x00,0x00,0x00};
   int pad;
 
-#ifdef DEBUG
+#ifdef LIME_DEBUG
   fprintf(stderr, "In LimeWriteRecordData\n");
 #endif
 
@@ -209,7 +210,7 @@ int limeWriteRecordData( void *source, size_t *nbytes,
 
 int limeWriterCloseRecord(LimeWriter *w)
 {
-  printf("limeWriterCloseRecord not implemented\n");
+  /* printf("limeWriterCloseRecord not implemented\n"); */
   return 0;
 }
   
@@ -226,7 +227,7 @@ int write_lime_record_binary_header(FILE *fp, LimeRecordHeader *h)
   int i;
   int ret_val;
 
-#ifdef DEBUG
+#ifdef LIME_DEBUG
   fprintf(stderr, "In write_lime_record_binary_header\n");
 #endif
 

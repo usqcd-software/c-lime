@@ -5,6 +5,8 @@
 #include <lime_utils.h>
 #include <lime_binary_header.h>
 
+#undef LIME_DEBUG
+
 /* This is suppose to be the standard prototype for fseeko */
 int fseeko(FILE *stream, off_t offset, int whence);
 
@@ -289,7 +291,7 @@ int readAndParseHeader(LimeReader *r)
     return LIME_ERR_READ;
   }
 
-#ifdef DEBUG
+#ifdef LIME_DEBUG
   fprintf(stderr, "Magic number OK: %d\n ", i_magic_no);
   fflush(stderr);
 #endif
@@ -298,7 +300,7 @@ int readAndParseHeader(LimeReader *r)
 
   i_version = big_endian_short(*lime_hdr_version);
 
-#ifdef DEBUG
+#ifdef LIME_DEBUG
   fprintf(stderr, "Input Version: %d\n ", (int)i_version);
   fflush(stderr);
 #endif
@@ -312,7 +314,7 @@ int readAndParseHeader(LimeReader *r)
     i_MB = 0;
   }
 
-#ifdef DEBUG
+#ifdef LIME_DEBUG
   fprintf(stderr, "MB Flag: %d\n ", (int)i_MB);
   fflush(stderr);
 #endif
@@ -326,7 +328,7 @@ int readAndParseHeader(LimeReader *r)
     i_ME = 0;
   }
 
-#ifdef DEBUG
+#ifdef LIME_DEBUG
   fprintf(stderr, "ME Flag: %d\n ", (int)i_ME);
   fflush(stderr);
 #endif
@@ -335,7 +337,7 @@ int readAndParseHeader(LimeReader *r)
 
   i_data_length = big_endian_long_long(*lime_hdr_data_len);
 
-#ifdef DEBUG
+#ifdef LIME_DEBUG
   fprintf(stderr, "Data Length: %d\n ", (int)i_data_length);
   fflush(stderr);  
 #endif
@@ -350,7 +352,7 @@ int readAndParseHeader(LimeReader *r)
     exit(EXIT_FAILURE);
   }
 
-#ifdef DEBUG
+#ifdef LIME_DEBUG
   printf("readAndParseRecordHeader: type %s\n",typebuf);
 #endif
 
