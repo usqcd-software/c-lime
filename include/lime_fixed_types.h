@@ -7,9 +7,7 @@
 
 #if ( HAVE_STDINT_H )
 /* We have either got <inttypes.h> or <stdint.h> or both */
-#if HAVE_STDINT_H
 #include <stdint.h>
-#endif
 
 #ifdef HAVE_UINT16_T
 typedef uint16_t n_uint16_t;
@@ -79,7 +77,7 @@ typedef unsigned long long n_uint64_t;
 #error "Could not find unsigned type of length 4 bytes = 32 bits"
 #endif
 
-#endif /* ifdef ( HAVE_STDINT_H || HAVE_INTTYPES_H ) */
+#endif /* ifdef ( HAVE_STDINT_H ) */
 
 
 #endif /* initial trigger guard */
