@@ -50,7 +50,7 @@ static n_uint64_t *lime_hdr_data_len = &lime_header.int64[1];
  * Meaning | string specifying record type |
  */
 
-static char     *lime_hdr_rec_type     = &lime_header.uchr[16];
+static unsigned char *lime_hdr_rec_type     = &lime_header.uchr[16];
 
 /* Note: max 127 chars in string to permit null termination */
 #define MAX_LIME_HDR_REC_TYPE 128  
