@@ -12,7 +12,7 @@ AC_PROG_CC
 AC_PROG_RANLIB
 
 # Checks for header files.
-## AC_CHECK_HEADERS([stdlib.h strings.h])
+AC_CHECK_HEADERS([stdint.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
 ## AC_C_CONST
