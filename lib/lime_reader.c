@@ -161,7 +161,7 @@ int limeReaderReadData(void *dest, size_t *nbytes, LimeReader *r)
    from the same file */
 int limeReaderCloseRecord(LimeReader *r)
 {
-  printf("limeReaderCloseRecord not implemented\n");
+  /* printf("limeReaderCloseRecord not implemented\n"); */
   return 0;
 }
       
