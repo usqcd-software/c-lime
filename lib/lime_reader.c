@@ -41,8 +41,8 @@ void limeDestroyReader(LimeReader *r)
 
     if ( r->curr_header != (LimeRecordHeader *)NULL ) { 
       limeDestroyHeader(r->curr_header);
+      r->curr_header = (LimeRecordHeader *)NULL;
     }
-    
     free(r);
 
   }
@@ -54,7 +54,7 @@ int limeReaderNextRecord(LimeReader *r)
   char myname[] = "limeReaderNextRecord";
 
   if( r == (LimeReader *)NULL ) { 
-    printf("limeReadNextRecord returns LIME_ERR_PARAM\n");
+    printf("%s LIME_ERR_PARAM\n",myname);
     return LIME_ERR_PARAM;
   }
   
@@ -65,7 +65,7 @@ int limeReaderNextRecord(LimeReader *r)
     status = readAndParseHeader(r);
 
     if ( status < 0 ) { 
-      printf("%s returns %d\n",myname,status);
+      if( status != LIME_EOF )printf("%s returning %d\n",myname,status);
       return status;
     }
 
@@ -81,7 +81,7 @@ int limeReaderNextRecord(LimeReader *r)
        record */
     status = skipReaderBytes(r, r->bytes_left);
     if ( status < 0 ) { 
-      printf("%s returns %d\n",myname,status);
+      if( status != LIME_EOF )printf("%s returns %d\n",myname,status);
       return status;
     }
     
@@ -97,7 +97,7 @@ int limeReaderNextRecord(LimeReader *r)
        and try to read the next header */
     status = readAndParseHeader(r);
     if ( status < 0 ){
-      printf("%s returns %d\n",myname,status);
+      if( status != LIME_EOF )printf("%s returns %d\n",myname,status);
       return status;
     }
     /* We have started a new record */
@@ -272,6 +272,7 @@ int readAndParseHeader(LimeReader *r)
   /* Destroy any old header structure kicking about */
   if( r->curr_header != (LimeRecordHeader *)NULL ) { 
     limeDestroyHeader(r->curr_header);
+    r->curr_header = (LimeRecordHeader *)NULL;
   }
 
   /* Read the entire header */
@@ -279,6 +280,8 @@ int readAndParseHeader(LimeReader *r)
   status = fread((void *)lime_header.int64, 
 		 sizeof(n_uint64_t), MAX_HDR64, r->fp);
   if( status != MAX_HDR64 ) {
+    if( feof( r->fp ) ) return LIME_EOF;
+    fprintf(stderr,"%s read %d but wanted %d\n",myname,status,MAX_HDR64);
     return LIME_ERR_READ;
   }
 
@@ -291,8 +294,8 @@ int readAndParseHeader(LimeReader *r)
     return LIME_ERR_READ;
   }
 
-#ifdef LIME_DEBUG
-  fprintf(stderr, "Magic number OK: %d\n ", i_magic_no);
+#ifdef DEBUG
+  fprintf(stderr, "%s Magic number OK: %d\n ", myname, i_magic_no);
   fflush(stderr);
 #endif
 
@@ -300,8 +303,8 @@ int readAndParseHeader(LimeReader *r)
 
   i_version = big_endian_short(*lime_hdr_version);
 
-#ifdef LIME_DEBUG
-  fprintf(stderr, "Input Version: %d\n ", (int)i_version);
+#ifdef DEBUG
+  fprintf(stderr, "%s Input Version: %d\n ", myname,(int)i_version);
   fflush(stderr);
 #endif
 
@@ -314,8 +317,8 @@ int readAndParseHeader(LimeReader *r)
     i_MB = 0;
   }
 
-#ifdef LIME_DEBUG
-  fprintf(stderr, "MB Flag: %d\n ", (int)i_MB);
+#ifdef DEBUG
+  fprintf(stderr, "%s MB Flag: %d\n ", myname, (int)i_MB);
   fflush(stderr);
 #endif
   
@@ -328,8 +331,8 @@ int readAndParseHeader(LimeReader *r)
     i_ME = 0;
   }
 
-#ifdef LIME_DEBUG
-  fprintf(stderr, "ME Flag: %d\n ", (int)i_ME);
+#ifdef DEBUG
+  fprintf(stderr, "%s ME Flag: %d\n ", myname, (int)i_ME);
   fflush(stderr);
 #endif
 
@@ -337,8 +340,8 @@ int readAndParseHeader(LimeReader *r)
 
   i_data_length = big_endian_long_long(*lime_hdr_data_len);
 
-#ifdef LIME_DEBUG
-  fprintf(stderr, "Data Length: %d\n ", (int)i_data_length);
+#ifdef DEBUG
+  fprintf(stderr, "%s Data Length: %d\n ", myname, (int)i_data_length);
   fflush(stderr);  
 #endif
 
@@ -348,19 +351,19 @@ int readAndParseHeader(LimeReader *r)
   /* Sanity Checking */
   /* Check Version */
   if( i_version != LIME_VERSION ) { 
-    fprintf(stderr, "Unknown Lime Version\n");
+    fprintf(stderr, "%s Unknown Lime Version\n",myname);
     exit(EXIT_FAILURE);
   }
 
-#ifdef LIME_DEBUG
-  printf("readAndParseRecordHeader: type %s\n",typebuf);
+#ifdef DEBUG
+  printf("%s: type %s\n",myname,typebuf);
 #endif
 
   /* If we are the first packet we MUST have MB flag set */
   if( (r->first_read == 0 && i_MB == 0) || 
       (r->first_read == 1 && i_MB == 1 )) { 
-    fprintf(stderr, "MB Flag incorrect: first_read = %d MB=%d \n",
-	    r->first_read, i_MB);
+    fprintf(stderr, "%s MB Flag incorrect: first_read = %d MB=%d \n",
+	    myname, r->first_read, i_MB);
     exit(EXIT_FAILURE);
   }
 
@@ -370,7 +373,7 @@ int readAndParseHeader(LimeReader *r)
 
 
   if (r->curr_header == (LimeRecordHeader *)NULL ) { 
-    fprintf(stderr, "ERROR; Couldn't create header\n");
+    fprintf(stderr, "%s ERROR; Couldn't create header\n",myname);
     exit(EXIT_FAILURE);
   }
 

@@ -47,8 +47,8 @@ void limeDestroyHeader(LimeRecordHeader *h)
   if ( h != (LimeRecordHeader *) NULL) { 
     if (h->type != (char *)NULL ) { 
       free(h->type);
+      h->type = (char *) NULL;
     }
-
     free(h);
   }
 }

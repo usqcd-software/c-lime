@@ -19,7 +19,7 @@
 #define LIME_LAST_REC_WRITTEN     ((int)-4)
 #define LIME_ERR_WRITE            ((int)-5) /**< Some sort of write error occurred */
 #define LIME_EOR                  ((int)-6) /**< End of Record (EOR) */
-#define LIME_EOM                  ((int)-7) /**< End of Message (EOM) */
+#define LIME_EOF                  ((int)-7) /**< End of File (EOF) */
 #define LIME_ERR_READ             ((int)-8) /**< A read error has occurred */
 #define LIME_ERR_SEEK             ((int)-9) /**< Error seeking */
 #define LIME_ERR_MBME             ((int)-10) /**< MB/ME flags incorrect */
