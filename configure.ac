@@ -1,5 +1,5 @@
 AC_PREREQ(2.53)
-AC_INIT(lime, 1.0, bj@ph.ed.ac.uk)
+AC_INIT(lime, 1.1, detar@physics.utah.edu)
 AC_CONFIG_AUX_DIR(config)
 
 AC_CONFIG_SRCDIR([include/lime_header.h])
@@ -25,5 +25,6 @@ AC_CONFIG_FILES(Makefile)
 AC_CONFIG_FILES(include/Makefile)
 AC_CONFIG_FILES(lib/Makefile)
 AC_CONFIG_FILES(examples/Makefile)
+AC_CONFIG_FILES(doc/Makefile)
 
 AC_OUTPUT
