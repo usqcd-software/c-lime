@@ -24,20 +24,20 @@ int main(int argc, char *argv[])
   
   if( argc != 2 ) { 
     fprintf(stderr, "Usage: %s <lime_file>\n", argv[0]);
-    exit(EXIT_FAILURE);
+    return EXIT_FAILURE;
   }
   
 
   fp = fopen(argv[1], "r");
   if(fp == (FILE *)NULL) { 
     fprintf(stderr,"Unable to open file %s for reading\n", argv[1]);
-    exit(EXIT_FAILURE);
+    return EXIT_FAILURE;
   }
 
   reader = limeCreateReader(fp);
   if( reader == (LimeReader *)NULL ) { 
     fprintf(stderr, "Unable to open LimeReader\n");
-    exit(EXIT_FAILURE);
+    return EXIT_FAILURE;
   }
 
   while( (status = limeReaderNextRecord(reader)) != LIME_EOF ){
@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
     if( status != LIME_SUCCESS ) { 
       fprintf(stderr, "limeReaderNextRecord returned status = %d\n", 
 	      status);
-      exit(EXIT_FAILURE);
+      return EXIT_FAILURE;
     }
     
     printf("\n\n");
@@ -58,7 +58,7 @@ int main(int argc, char *argv[])
     data_buf = (char *)malloc(sizeof(char)*(reader->bytes_total)+1);
     if( data_buf == (char *)NULL) { 
       fprintf(stderr, "Couldn't malloc data buf\n");
-      exit(EXIT_FAILURE);
+      return EXIT_FAILURE;
     }
 
     nbytes = reader->bytes_total;
@@ -68,7 +68,7 @@ int main(int argc, char *argv[])
       if( status != LIME_EOR ) { 
 	fprintf(stderr, "LIME Read Error Occurred: status= %d  %d bytes wanted, %d read\n", status,
 		reader->bytes_total, nbytes);
-	exit(EXIT_FAILURE);
+	return EXIT_FAILURE;
       }
     }
 
@@ -84,6 +84,8 @@ int main(int argc, char *argv[])
 
   limeDestroyReader(reader);
   fclose(fp);
+
+  return EXIT_SUCCESS;
 
 }   
     

@@ -242,6 +242,12 @@ int limeReaderMBFlag(LimeReader *r){
   return r->curr_header->MB_flag;
 }
 
+/* Return ME flag in current header */
+int limeReaderMEFlag(LimeReader *r){
+  if(r == NULL)return -1;
+  return r->curr_header->ME_flag;
+}
+
 /* Return pointer to LIME type string in current header */
 char *limeReaderType(LimeReader *r){
   if(r == NULL)return NULL;

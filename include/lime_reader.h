@@ -59,6 +59,12 @@ int limeReaderNextRecord(LimeReader *r);
  */
 int limeReaderMBFlag(LimeReader *r);
 
+/** \brief Accessor for ME Flag in current header
+ *  \params r points to a LimeReader
+ *  \returns -1 if r is null, otherwise the MB_flag
+ */
+int limeReaderMEFlag(LimeReader *r);
+
 /** \brief Accessor for type string in current header
  *  \params r points to a LimeReader
  *  \returns NULL if r is null, otherwise the MB_flag

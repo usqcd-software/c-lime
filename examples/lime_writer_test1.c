@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
   fp = fopen("lime_output.bin", "w");
   if(fp == (FILE *)NULL) { 
     fprintf(stderr, "Unable to open output.bin\n");
-    exit(EXIT_FAILURE);
+    return EXIT_FAILURE;
   }
 
   /* Set up the LimeWriter */
@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
   dg = limeCreateWriter(fp);
   if( dg == (LimeWriter *)NULL ) { 
     fprintf(stderr, "Unable to initialise LIME\n");
-    exit(EXIT_FAILURE);
+    return EXIT_FAILURE;
   }
 
   /* LimeOutput the message */
@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
 
   if( status < 0 ) { 
     fprintf(stderr, "Oh dear some horrible error has occurred. status is: %d\n", status);
-    exit(EXIT_FAILURE);
+    return EXIT_FAILURE;
   }
 
   limeDestroyHeader(h);
@@ -58,7 +58,7 @@ int main(int argc, char *argv[])
 
   if( status < 0 ) { 
      fprintf(stderr, "Oh dear some horrible error has occurred. status is: %d\n", status);
-    exit(EXIT_FAILURE);
+    return EXIT_FAILURE;
   }
   fprintf(stderr, "Wrote %d bytes\n", bytes);
 
@@ -69,10 +69,12 @@ int main(int argc, char *argv[])
   status = limeWriteRecordData(bufstart, &bytes, dg);
   if( status < 0 ) { 
      fprintf(stderr, "Oh dear some horrible error has occurred. status is: %d\n", status);
-    exit(EXIT_FAILURE);
+    return EXIT_FAILURE;
   }
   
   fprintf(stderr, "Wrote %d bytes\n", bytes);
   limeDestroyWriter(dg);
   fclose(fp);
+
+  return EXIT_SUCCESS;
 }
