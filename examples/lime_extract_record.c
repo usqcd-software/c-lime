@@ -45,12 +45,14 @@ int main(int argc, char *argv[])
       exit(EXIT_FAILURE);
     }
     
+#if 0
     printf("\n\n");
     printf("Type:           %s\n", reader->curr_header->type);
     printf("Data Length:    %d\n", reader->curr_header->data_length);
     printf("Padding Length: %d\n", reader->bytes_pad);
     printf("MB flag:        %d\n", reader->curr_header->MB_flag);
     printf("ME flag:        %d\n", reader->curr_header->ME_flag);
+#endif
     
     data_buf = (char *)malloc(sizeof(char)*(reader->bytes_total));
     if( data_buf == (char *)NULL) { 
@@ -78,6 +80,7 @@ int main(int argc, char *argv[])
     }
 
     free(data_buf);
+    nrec++;
   }
 
   limeDestroyReader(reader);
