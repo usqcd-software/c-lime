@@ -7,6 +7,11 @@
 #include "lime_binary_header.h"
 #include "lime_utils.h"
 
+
+/* This is suppose to be the standard prototype for fseeko */
+int fseeko(FILE *stream, off_t offset, int whence);
+
+
 /* Forward declaration */
 int write_lime_record_binary_header(FILE *fp, LimeRecordHeader *h);
 int skip_lime_record_binary_header(FILE *fp);
@@ -247,7 +252,7 @@ int write_lime_record_binary_header(FILE *fp, LimeRecordHeader *h)
     big_endian_long_long((n_uint64_t)h->data_length);
 
   /* Record type string - trailing nulls  */
-  strncpy(lime_hdr_rec_type,h->type,MAX_LIME_HDR_REC_TYPE);
+  strncpy((char*)lime_hdr_rec_type,h->type,MAX_LIME_HDR_REC_TYPE);
 
   /* Force a null termination */
   lime_hdr_rec_type[MAX_LIME_HDR_REC_TYPE] = '\0';

@@ -5,6 +5,9 @@
 #include <lime_utils.h>
 #include <lime_binary_header.h>
 
+/* This is suppose to be the standard prototype for fseeko */
+int fseeko(FILE *stream, off_t offset, int whence);
+
 /* Forward declarations for internal routines */
 int skipReaderBytes(LimeReader *r, size_t bytes_to_skip);
 int readAndParseHeader(LimeReader *r);
@@ -360,7 +363,7 @@ int readAndParseHeader(LimeReader *r)
   }
 
   r->curr_header = limeCreateHeader(i_MB, i_ME,
-				    typebuf,
+				    (char*)typebuf,
 				    i_data_length);
 
 
