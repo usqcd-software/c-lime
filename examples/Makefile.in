@@ -114,17 +114,24 @@ LDADD = @LIBS@ -llime
 #
 # The programs to build
 #
-check_PROGRAMS = lime_reader_test1 lime_writer_test1
+check_PROGRAMS = lime_reader_test1 lime_writer_test1 lime_extract_record
 
 #
 # The program and its dependencies
 #
 lime_reader_test1_SOURCES = lime_reader_test1.c
 lime_writer_test1_SOURCES = lime_writer_test1.c
+lime_extract_record_SOURCES = lime_extract_record.c
 subdir = examples
 mkinstalldirs = $(SHELL) $(top_srcdir)/config/mkinstalldirs
 CONFIG_CLEAN_FILES =
-check_PROGRAMS = lime_reader_test1$(EXEEXT) lime_writer_test1$(EXEEXT)
+check_PROGRAMS = lime_reader_test1$(EXEEXT) lime_writer_test1$(EXEEXT) \
+	lime_extract_record$(EXEEXT)
+am_lime_extract_record_OBJECTS = lime_extract_record.$(OBJEXT)
+lime_extract_record_OBJECTS = $(am_lime_extract_record_OBJECTS)
+lime_extract_record_LDADD = $(LDADD)
+lime_extract_record_DEPENDENCIES =
+lime_extract_record_LDFLAGS =
 am_lime_reader_test1_OBJECTS = lime_reader_test1.$(OBJEXT)
 lime_reader_test1_OBJECTS = $(am_lime_reader_test1_OBJECTS)
 lime_reader_test1_LDADD = $(LDADD)
@@ -139,15 +146,17 @@ lime_writer_test1_LDFLAGS =
 DEFAULT_INCLUDES =  -I. -I$(srcdir)
 depcomp = $(SHELL) $(top_srcdir)/config/depcomp
 am__depfiles_maybe = depfiles
-@AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/lime_reader_test1.Po \
+@AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/lime_extract_record.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/lime_reader_test1.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/lime_writer_test1.Po
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-DIST_SOURCES = $(lime_reader_test1_SOURCES) $(lime_writer_test1_SOURCES)
+DIST_SOURCES = $(lime_extract_record_SOURCES) \
+	$(lime_reader_test1_SOURCES) $(lime_writer_test1_SOURCES)
 DIST_COMMON = Makefile.am Makefile.in
-SOURCES = $(lime_reader_test1_SOURCES) $(lime_writer_test1_SOURCES)
+SOURCES = $(lime_extract_record_SOURCES) $(lime_reader_test1_SOURCES) $(lime_writer_test1_SOURCES)
 
 all: all-am
 
@@ -161,6 +170,9 @@ Makefile:  $(srcdir)/Makefile.in  $(top_builddir)/config.status
 
 clean-checkPROGRAMS:
 	-test -z "$(check_PROGRAMS)" || rm -f $(check_PROGRAMS)
+lime_extract_record$(EXEEXT): $(lime_extract_record_OBJECTS) $(lime_extract_record_DEPENDENCIES) 
+	@rm -f lime_extract_record$(EXEEXT)
+	$(LINK) $(lime_extract_record_LDFLAGS) $(lime_extract_record_OBJECTS) $(lime_extract_record_LDADD) $(LIBS)
 lime_reader_test1$(EXEEXT): $(lime_reader_test1_OBJECTS) $(lime_reader_test1_DEPENDENCIES) 
 	@rm -f lime_reader_test1$(EXEEXT)
 	$(LINK) $(lime_reader_test1_LDFLAGS) $(lime_reader_test1_OBJECTS) $(lime_reader_test1_LDADD) $(LIBS)
@@ -174,6 +186,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lime_extract_record.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lime_reader_test1.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lime_writer_test1.Po@am__quote@
 
