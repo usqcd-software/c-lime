@@ -40,7 +40,6 @@ int main(int argc, char *argv[])
   
   fprintf(stderr, "Writing Header\n");
   status = limeWriteRecordHeader( h, 
-				  1, /* First and Last record */
 				  dg );
 
   if( status < 0 ) { 
