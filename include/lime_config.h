@@ -15,14 +15,13 @@
 #include "lime_config_internal.h"
 
 /* Prefix everything with LIME_ */
-#define LIME_PACKAGE PACKAGE
-#define LIME_PACKAGE_BUGREPORT PACKAGE_BUGREPORT
-#define LIME_PACKAGE_NAME PACKAGE_NAME
-#define LIME_PACKAGE_STRING PACKAGE_STRING
-#define LIME_PACKAGE_TARNAME PACKAGE_TARNAME
-#define LIME_PACKAGE_VERSION PACKAGE_VERSION
-#define LIME_VARSION VERSION
-
+static const char* const LIME_PACKAGE = PACKAGE;
+static const char* const LIME_PACKAGE_BUGREPORT = PACKAGE_BUGREPORT;
+static const char* const LIME_PACKAGE_NAME = PACKAGE_NAME;
+static const char* const LIME_PACKAGE_STRING = PACKAGE_STRING;
+static const char* const LIME_PACKAGE_TARNAME = PACKAGE_TARNAME;
+static const char* const LIME_PACKAGE_VERSION = PACKAGE_VERSION;
+/* LIME_VERSION is already defined in lime_defs.h */
 
 /* Undef the unwanted */
 #undef PACKAGE
