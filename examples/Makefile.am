@@ -11,13 +11,14 @@ LDADD = @LIBS@ -llime
 #
 # The programs to build
 #
-check_PROGRAMS = lime_reader_test1 lime_writer_test1
+check_PROGRAMS = lime_reader_test1 lime_writer_test1 lime_extract_record
 
 #
 # The program and its dependencies
 #
 lime_reader_test1_SOURCES = lime_reader_test1.c
 lime_writer_test1_SOURCES = lime_writer_test1.c
+lime_extract_record_SOURCES = lime_extract_record.c
 
 
 .PHONY: build_lib
