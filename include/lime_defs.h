@@ -7,9 +7,10 @@
 /**< The lime version we are implementing (v.1) */
 #define LIME_VERSION              ((unsigned int)0x01)
 
-/**< The maximum internal buffer size I can allocate */
+/**< The maximum internal buffer size I can allocate (this is 2Gb). This
+     value appears to be unused in the code so I'll leave it at this enormous
+     amount (BJ: 28/02/05) */
 #define LIME_MAX_BUFSIZE          ((unsigned int)2147483647)
-
 
 #define LIME_SUCCESS              ((int) 0) /**< Success status code */
 #define LIME_ERR_LAST_NOT_WRITTEN ((int)-1) 
