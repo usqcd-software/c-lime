@@ -7,7 +7,7 @@
 
 #undef LIME_DEBUG
 
-/* This is suppose to be the standard prototype for fseeko */
+/* This is supposed to be the standard prototype for fseeko */
 int fseeko(FILE *stream, off_t offset, int whence);
 
 /* Forward declarations for internal routines */
@@ -141,12 +141,12 @@ int limeReaderReadData(void *dest, size_t *nbytes, LimeReader *r)
       bytes_to_read = *nbytes;
     }
 
+    /* Actually read */
     bytes_read = fread(dest, sizeof(unsigned char), bytes_to_read, r->fp);
     *nbytes = bytes_read;
-
-    if( bytes_read != bytes_to_read ) { 
+    
+    if( bytes_read != bytes_to_read )
       return LIME_ERR_READ;
-    }
 
     r->bytes_left -= bytes_read;
 
@@ -177,7 +177,6 @@ int limeReaderCloseRecord(LimeReader *r)
 
 int skipReaderBytes(LimeReader *r, size_t bytes_to_skip)
 {
-  unsigned char *buf;
 
   int status = LIME_SUCCESS;
   size_t bytes_to_seek;
@@ -189,7 +188,8 @@ int skipReaderBytes(LimeReader *r, size_t bytes_to_skip)
   if(r->eorP == 1){
     /* This is an error if the skip is non null */
     if(bytes_to_skip > 0){
-      printf("Seeking %d while already at end of record\n",bytes_to_skip);
+      printf("Seeking %lu while already at end of record\n",
+	     (unsigned long)bytes_to_skip);
       return LIME_ERR_SEEK;
     }
     /* If null skip and at end of record, ignore the request */
@@ -214,7 +214,7 @@ int skipReaderBytes(LimeReader *r, size_t bytes_to_skip)
     status = fseeko(r->fp, (off_t)bytes_to_seek, SEEK_CUR);
     if(status < 0){
       return LIME_ERR_SEEK;
-      printf("fseek returned %d\n");
+      printf("fseek returned %d\n",status);
     }
   }
 
@@ -233,7 +233,9 @@ int limeReaderSeek(LimeReader *r, off_t offset, int whence){
   return LIME_ERR_READ;
 }
 
+
 /* Accessors for header information */
+
 /* Return MB flag in current header */
 int limeReaderMBFlag(LimeReader *r){
   if(r == NULL)return -1;
@@ -251,6 +253,7 @@ size_t limeReaderBytes(LimeReader *r){
   if(r == NULL)return 0;
   return r->bytes_total;
 }
+
 
 /* Entrance assumption to this function is that:
    i) The stream pointer is pointing to the beginning of 

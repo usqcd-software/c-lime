@@ -16,8 +16,8 @@ typedef struct {
   int eorP;              /**< End of record */
   LimeRecordHeader *curr_header; /**< The current record header */
 
-  size_t bytes_left;     /**< Data bytes left in the current record */
-  size_t bytes_total;    /**< Total data bytes in the current record */
+  off_t bytes_left;      /**< Data bytes left in the current record */
+  off_t bytes_total;     /**< Total data bytes in the current record */
   size_t bytes_pad;      /**< Padding bytes at end of current record */
 } LimeReader;
 
@@ -75,14 +75,12 @@ size_t limeReaderBytes(LimeReader *r);
  *  \params dest is the destination buffer for the bytes to read.
  *  \params nbytes is a pointer to the integer containing the no of 
  *          bytes to read.
- *  \params s is the LimeReader to read from 
+ *  \params r is the LimeReader to read from 
  *
  *  \returns a status code, and sets nbytes to the actual number of 
  *           bytes written.
  */
-int limeReaderReadData(void *dest,
-		       size_t *nbytes, 
-		       LimeReader *r);
+int limeReaderReadData(void *dest, size_t *nbytes, LimeReader *r);
 
 /** \brief Advance to end of current record
  *  \params r points to a LimeReader

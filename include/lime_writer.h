@@ -12,8 +12,8 @@ typedef struct {
   int last_written;        /**< has the last record been written */
   FILE* fp;                /**< What file are we writing to */
   int header_nextP;        /**< Are we to write a header next or data */
-  size_t bytes_total;      /**< Total no of bytes in this record */
-  size_t bytes_left;       /**< The number of bytes left in the current
+  off_t bytes_total;      /**< Total no of bytes in this record */
+  off_t bytes_left;       /**< The number of bytes left in the current
                                  record */
   size_t bytes_pad;        /**< The number of bytes to pad the record */
   int isLastP;             /**< Is this the last record in the message? */
@@ -38,11 +38,8 @@ int limeDestroyWriter(LimeWriter *s);
  *                circumstances
  *\param lastP  is a boolean indicating whether this is to be the 
  *              last record
- *\param do_write is a boolean indicating whether this node 
- *              is supposed to be writing a header.
  */
-int limeWriteRecordHeader( LimeRecordHeader *props, int do_write,
-			   LimeWriter* d);
+int limeWriteRecordHeader( LimeRecordHeader *props, LimeWriter* d);
 
 /** Write a lime record
  *
@@ -51,9 +48,7 @@ int limeWriteRecordHeader( LimeRecordHeader *props, int do_write,
  *              of bytes actually written
  *\param d  is the LimeWriter/generator to use
  */
-int limeWriteRecordData( void *source,
-			 size_t *nbytes, 
-			 LimeWriter* d );
+int limeWriteRecordData( void *source, size_t *nbytes,  LimeWriter* d);
 
 /** \brief Advance to end of current record
  *  \params w points to a LimeWriter

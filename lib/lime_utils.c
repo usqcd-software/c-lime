@@ -127,7 +127,8 @@ void lime_byte_swap(void *ptr, size_t size, size_t nmemb)
   break;
                                                                                 
   default:
-    fprintf(stderr,"byte_swap: unsupported word size = %d\n",size);
+    fprintf(stderr,"byte_swap: unsupported word size = %lu\n",
+	    (unsigned long)size);
     exit(1);
   }
 }
@@ -135,11 +136,11 @@ void lime_byte_swap(void *ptr, size_t size, size_t nmemb)
 
 n_uint64_t big_endian_long_long(n_uint64_t ull)
 {
-   unsigned long long ret_val = ull;
+   uint64_t ret_val = ull;
 
    if ( lime_big_endian() == 0 ) {
 	/* We are little endian. We need to convert */
-        lime_byte_swap((void *)&ret_val, sizeof(unsigned long long), 1);
+        lime_byte_swap((void *)&ret_val, sizeof(uint64_t), 1);
  
    }
    return ret_val;
@@ -147,11 +148,11 @@ n_uint64_t big_endian_long_long(n_uint64_t ull)
  
 n_uint32_t big_endian_long(n_uint32_t ul)
 {
-   unsigned long ret_val = ul;
+   uint32_t ret_val = ul;
 
    if ( lime_big_endian() == 0 ) {
 	/* We are little endian. We need to convert */
-        lime_byte_swap((void *)&ret_val, sizeof(unsigned long), 1);
+        lime_byte_swap((void *)&ret_val, sizeof(uint32_t), 1);
  
    }
    return ret_val;
@@ -159,10 +160,10 @@ n_uint32_t big_endian_long(n_uint32_t ul)
  
 n_uint16_t big_endian_short(n_uint16_t us)
 {
-   unsigned short ret_val = us;
+   uint16_t ret_val = us;
    if( lime_big_endian() == 0 ) { 
        /* We are little endian. Need to convert */
-       lime_byte_swap((void *)&ret_val, sizeof(unsigned short), 1);
+       lime_byte_swap((void *)&ret_val, sizeof(uint16_t), 1);
    }
    return ret_val;
 }

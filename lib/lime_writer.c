@@ -16,7 +16,7 @@ int fseeko(FILE *stream, off_t offset, int whence);
 /* Forward declaration */
 int write_lime_record_binary_header(FILE *fp, LimeRecordHeader *h);
 int skip_lime_record_binary_header(FILE *fp);
-int skipWriterBytes(LimeWriter *w, size_t bytes_to_skip);
+int skipWriterBytes(LimeWriter *w, off_t bytes_to_skip);
 
 LimeWriter* limeCreateWriter(FILE *fp)
 {
@@ -45,7 +45,6 @@ int limeDestroyWriter(LimeWriter *s)
 {
 
   LimeRecordHeader *h;
-  int status;
   size_t nbytes = 0;
 #ifdef LIME_DEBUG
   fprintf(stderr, "Closing Lime Generator\n");
@@ -66,8 +65,9 @@ int limeDestroyWriter(LimeWriter *s)
       exit(EXIT_FAILURE);
     }
 
-    limeWriteRecordHeader(h, 1, s);
+    limeWriteRecordHeader(h, s);
     nbytes = 0;
+    /* Take care of any unfinished record padding */
     limeWriteRecordData(NULL,&nbytes,s); 
     limeDestroyHeader(h);
   }
@@ -77,11 +77,8 @@ int limeDestroyWriter(LimeWriter *s)
 }
 
 
-int limeWriteRecordHeader( LimeRecordHeader *props, int do_write,
-			   LimeWriter *d)
+int limeWriteRecordHeader( LimeRecordHeader *props, LimeWriter *d)
 {
-  /* If do_write is false we set state as though we wrote the header,
-     but don't actually write it */
 
   int ret_val;
 
@@ -118,12 +115,7 @@ int limeWriteRecordHeader( LimeRecordHeader *props, int do_write,
   if(  d->isLastP != props->MB_flag )
     return LIME_ERR_MBME;
 
-  /* Write header, if requested, or advance file pointer past header */
-  /* All node file pointers should then be positioned after the header */
-  if(do_write)
-    ret_val = write_lime_record_binary_header(d->fp, props);
-  else
-    ret_val = skip_lime_record_binary_header(d->fp);
+  ret_val = write_lime_record_binary_header(d->fp, props);
 
   /* Set new writer state */
   d->isLastP      = props->ME_flag;
@@ -137,8 +129,8 @@ int limeWriteRecordHeader( LimeRecordHeader *props, int do_write,
  
 }
 
-int limeWriteRecordData( void *source, size_t *nbytes,
-			    LimeWriter* d)
+/* Write data. */
+int limeWriteRecordData( void *source, size_t *nbytes, LimeWriter* d)
 {
   size_t bytes_to_write;
   size_t ret_val;
@@ -172,13 +164,12 @@ int limeWriteRecordData( void *source, size_t *nbytes,
     
     *nbytes = ret_val;
     
-    if( ret_val != bytes_to_write ) { 
+    if( ret_val != bytes_to_write )
       return LIME_ERR_WRITE;
-    }
-
+    
     /* We succeeded */
     d->bytes_left -= bytes_to_write;
-  
+    
   }
 
   if( d->bytes_left == 0 ) { 
@@ -188,10 +179,9 @@ int limeWriteRecordData( void *source, size_t *nbytes,
     if( pad > 0 ) { 
       ret_val = fwrite((const void *)padbuf, sizeof(unsigned char),
 		       pad, d->fp);
-
-      if( ret_val != pad ) { 
+      
+      if( ret_val != pad )
 	return LIME_ERR_WRITE;
-      }
     }
 
     d->header_nextP = 1;  /* Next thing to come is a header */
@@ -274,12 +264,11 @@ int write_lime_record_binary_header(FILE *fp, LimeRecordHeader *h)
    flag.  If the skip takes us past the end of the data in the current
    record, skip to end of the record and return an error. */
 
-int skipWriterBytes(LimeWriter *w, size_t bytes_to_skip)
+int skipWriterBytes(LimeWriter *w, off_t bytes_to_skip)
 {
-  unsigned char *buf;
 
   int status = LIME_SUCCESS;
-  size_t bytes_to_seek;
+  off_t bytes_to_seek;
 
   /* Ignore zero.  No negative skips */
   if(bytes_to_skip == 0)return LIME_SUCCESS;
@@ -287,8 +276,7 @@ int skipWriterBytes(LimeWriter *w, size_t bytes_to_skip)
 
   /* Prevent skip past the end of the data */
   if(w->bytes_left < bytes_to_skip){
-    bytes_to_skip = w->bytes_left;
-    printf("Seeking past end of data\n");
+    printf("Seeking past end of data\n");fflush(stdout);
     status = LIME_ERR_SEEK;
   }
 
@@ -298,21 +286,28 @@ int skipWriterBytes(LimeWriter *w, size_t bytes_to_skip)
     bytes_to_seek += w->bytes_pad;
     
   /* Seek */
-  if(bytes_to_seek > 0){
-    status = fseeko(w->fp, (off_t)bytes_to_seek, SEEK_CUR);
-    if(status < 0){
-      return LIME_ERR_SEEK;
-      printf("fseek returned %d\n");
-    }
+  status = fseeko(w->fp, bytes_to_seek, SEEK_CUR);
+  if(status < 0){
+    printf("fseek returned %d\n",status);fflush(stdout);
+    return LIME_ERR_SEEK;
   }
 
   /* Update the writer state */
-  w->bytes_left -= bytes_to_skip;
+  w->bytes_left -= bytes_to_seek;
+  if(w->bytes_left < 0)w->bytes_left = 0;
   
   return status;
 }
 
-int limeWriterSeek(LimeWriter *r, off_t offset, int whence){
-  fprintf(stderr, "limeWriterSeek not implemented yet\n");
-  return LIME_ERR_WRITE;
+int limeWriterSeek(LimeWriter *w, off_t offset, int whence){
+  int status;
+
+  if(whence == SEEK_CUR){
+    status = skipWriterBytes(w, offset);
+  }
+  else{
+    fprintf(stderr, "limeWriterSeek code %x not implemented yet\n",whence);  
+    status = LIME_ERR_WRITE;
+  }
+  return status;
 }
