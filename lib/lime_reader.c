@@ -5,10 +5,10 @@
 #include <lime_utils.h>
 #include <lime_binary_header.h>
 
-#undef LIME_DEBUG
+/* If we don't have fseeko this fill define it */
+#include <lime_fseeko.h>
 
-/* This is supposed to be the standard prototype for fseeko */
-int fseeko(FILE *stream, off_t offset, int whence);
+#undef LIME_DEBUG
 
 /* Forward declarations for internal routines */
 int skipReaderBytes(LimeReader *r, off_t bytes_to_skip);

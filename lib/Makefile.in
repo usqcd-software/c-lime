@@ -59,7 +59,8 @@ ARFLAGS = cru
 liblime_a_AR = $(AR) $(ARFLAGS)
 liblime_a_LIBADD =
 am_liblime_a_OBJECTS = lime_writer.$(OBJEXT) lime_header.$(OBJEXT) \
-	lime_utils.$(OBJEXT) lime_reader.$(OBJEXT)
+	lime_utils.$(OBJEXT) lime_reader.$(OBJEXT) \
+	lime_fseeko.$(OBJEXT)
 liblime_a_OBJECTS = $(am_liblime_a_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/include
 depcomp = $(SHELL) $(top_srcdir)/config/depcomp
@@ -150,11 +151,11 @@ target_alias = @target_alias@
 INCFLAGS = -I@top_srcdir@/include
 AM_CFLAGS = $(INCFLAGS)
 HDRS = lime.h lime_defs.h lime_writer.h lime_header.h lime_utils.h \
-	lime_reader.h
+	lime_reader.h lime_fseeko.h
 
 lib_LIBRARIES = liblime.a
 liblime_a_SOURCES = lime_writer.c  lime_header.c  lime_utils.c \
-	lime_reader.c
+	lime_reader.c lime_fseeko.c
 
 all: all-am
 
@@ -229,6 +230,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lime_fseeko.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lime_header.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lime_reader.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lime_utils.Po@am__quote@

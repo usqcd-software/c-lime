@@ -7,10 +7,9 @@
 #include "lime_binary_header.h"
 #include "lime_utils.h"
 
-#undef LIME_DEBUG
+#include "lime_fseeko.h"
 
-/* This is suppose to be the standard prototype for fseeko */
-int fseeko(FILE *stream, off_t offset, int whence);
+#undef LIME_DEBUG
 
 
 /* Forward declaration */
