@@ -44,9 +44,9 @@ static unsigned char *lime_hdr_mbme  = &lime_header.uchr[6];
 
 static n_uint64_t *lime_hdr_data_len = &lime_header.int64[1];
 
-/* Next 8 64-bit words 
- * int64:    2                     9
- * Bytes:    16                         79
+/* Next 16 64-bit words 
+ * int64:    2                     17
+ * Bytes:    16                        143
  * Meaning | string specifying record type |
  */
 
