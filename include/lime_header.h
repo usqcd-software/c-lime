@@ -10,7 +10,7 @@ typedef struct {
   int MB_flag;                 /**< Message begin Flag */
   int ME_flag;                 /**< Message end Flag */
   char *type;                  /**< The LimeType string */
-  size_t data_length;          /**< The length of the data to follow */
+  off_t data_length;          /**< The length of the data to follow */
 } LimeRecordHeader;
 
 
@@ -20,9 +20,9 @@ typedef struct {
 LimeRecordHeader *limeCreateHeader(int MB_flag,
 				   int ME_flag,
 				   char *type, 
-				   size_t reclen);
+				   off_t reclen);
 
-void limeDestroyHeader(LimeRecordHeader* h);
+void limeDestroyHeader(LimeRecordHeader *h);
 
 				     
 #endif

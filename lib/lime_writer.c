@@ -45,7 +45,7 @@ int limeDestroyWriter(LimeWriter *s)
 {
 
   LimeRecordHeader *h;
-  size_t nbytes = 0;
+  off_t nbytes = 0;
 #ifdef LIME_DEBUG
   fprintf(stderr, "Closing Lime Generator\n");
 #endif
@@ -62,7 +62,7 @@ int limeDestroyWriter(LimeWriter *s)
 
     if( h == (LimeRecordHeader *)NULL ) { 
       fprintf(stderr, "Unable to close LIME\n");
-      exit(EXIT_FAILURE);
+      return LIME_ERR_CLOSE;
     }
 
     limeWriteRecordHeader(h, s);
@@ -130,9 +130,9 @@ int limeWriteRecordHeader( LimeRecordHeader *props, LimeWriter *d)
 }
 
 /* Write data. */
-int limeWriteRecordData( void *source, size_t *nbytes, LimeWriter* d)
+int limeWriteRecordData( void *source, off_t *nbytes, LimeWriter* d)
 {
-  size_t bytes_to_write;
+  off_t bytes_to_write;
   size_t ret_val;
   unsigned char padbuf[7] = {0x00,0x00,0x00,0x00,0x00,0x00,0x00};
   int pad;

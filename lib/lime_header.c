@@ -8,7 +8,7 @@
 LimeRecordHeader *limeCreateHeader(int MB_flag,
 				   int ME_flag,
 				   char *type,
-				   size_t reclen)
+				   off_t reclen)
 {
 
   LimeRecordHeader *ret_val;

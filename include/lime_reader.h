@@ -71,11 +71,17 @@ int limeReaderMEFlag(LimeReader *r);
  */
 char *limeReaderType(LimeReader *r);
 
-/** \brief Accessor for number of bytes in current record
+/** \brief Accessor for number of total bytes in current record
  *  \params r points to a LimeReader
  *  \returns 0 if r is null, otherwise the byte count
  */
-size_t limeReaderBytes(LimeReader *r);
+off_t limeReaderBytes(LimeReader *r);
+
+/** \brief Accessor for number of pad bytes in current record
+ *  \params r points to a LimeReader
+ *  \returns 0 if r is null, otherwise the byte count
+ */
+size_t limeReaderPadBytes(LimeReader *r);
 
 /** \brief Read data from a record 
  *  \params dest is the destination buffer for the bytes to read.
@@ -86,7 +92,7 @@ size_t limeReaderBytes(LimeReader *r);
  *  \returns a status code, and sets nbytes to the actual number of 
  *           bytes written.
  */
-int limeReaderReadData(void *dest, size_t *nbytes, LimeReader *r);
+int limeReaderReadData(void *dest, off_t *nbytes, LimeReader *r);
 
 /** \brief Advance to end of current record
  *  \params r points to a LimeReader

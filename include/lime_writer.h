@@ -48,7 +48,7 @@ int limeWriteRecordHeader( LimeRecordHeader *props, LimeWriter* d);
  *              of bytes actually written
  *\param d  is the LimeWriter/generator to use
  */
-int limeWriteRecordData( void *source, size_t *nbytes,  LimeWriter* d);
+int limeWriteRecordData( void *source, off_t *nbytes,  LimeWriter* d);
 
 /** \brief Advance to end of current record
  *  \params w points to a LimeWriter

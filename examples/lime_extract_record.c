@@ -1,42 +1,74 @@
+/* Extract a single LIME record */
+/* Balint Joo 2003 */
+/* Usage ...
+
+      lime_extract_record <lime_file> <msgno> <recno>
+
+   where msgno is the message number and recno is the record number
+   (1-based enumeration)
+
+*/
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <lime.h>
+/*#define MAXBUF 1048576*/
+#define MAXBUF 8
+
+off_t mino(off_t i, off_t j){
+  return i < j ? i : j;
+}
 
 int main(int argc, char *argv[]) 
 {
-  char* data_buf;
-  
+  char buf[MAXBUF];
   LimeReader *reader;
   FILE *fp;
   int status;
-  size_t nbytes;
-  int rec;
-  int nrec = 0;
+  off_t nbytes, bytes_left, bytes_to_copy, read_bytes;
+  int rec_seek,msg_seek;
+  int rec, msg;
+  char *lime_type;
+  size_t bytes_pad;
+  int MB_flag, ME_flag;
   
-  if( argc != 3 ) { 
-    fprintf(stderr, "Usage: %s <lime_file> <record number - 0 based>\n", argv[0]);
-    exit(EXIT_FAILURE);
+  if( argc < 4 ) { 
+    fprintf(stderr, "Usage: %s <lime_file> <msgno> <recno>\n", argv[0]);
+    return EXIT_FAILURE;
   }
+
+  /* Open file */
 
   fp = fopen(argv[1], "r");
   if(fp == (FILE *)NULL) { 
     fprintf(stderr,"Unable to open file %s for reading\n", argv[1]);
-    exit(EXIT_FAILURE);
+    return EXIT_FAILURE;
   }
 
-  rec = atoi(argv[2]);
-  if (rec < 0) {
-    fprintf(stderr,"Invalid record number = %d\n", rec);
-    exit(EXIT_FAILURE);
+  /* Decode message and record number from command line */
+
+  msg_seek = atoi(argv[2]);
+  if (msg_seek <= 0) {
+    fprintf(stderr,"Invalid message number = %d\n", msg_seek);
+    return EXIT_FAILURE;
   }
 
+  rec_seek = atoi(argv[3]);
+  if (rec_seek <= 0) {
+    fprintf(stderr,"Invalid record number = %d\n", rec_seek);
+    return EXIT_FAILURE;
+  }
+
+  /* Open LIME reader */
   reader = limeCreateReader(fp);
   if( reader == (LimeReader *)NULL ) { 
     fprintf(stderr, "Unable to open LimeReader\n");
     exit(EXIT_FAILURE);
   }
 
+  /* Loop over records */
+  rec = 0;
+  msg = 0;
   while( (status = limeReaderNextRecord(reader)) != LIME_EOF ){
     
     if( status != LIME_SUCCESS ) { 
@@ -44,49 +76,65 @@ int main(int argc, char *argv[])
 	      status);
       exit(EXIT_FAILURE);
     }
-    
+
+    nbytes    = limeReaderBytes(reader);
+    lime_type = limeReaderType(reader);
+    bytes_pad = limeReaderPadBytes(reader);
+    MB_flag   = limeReaderMBFlag(reader);
+    ME_flag   = limeReaderMEFlag(reader);
+
+    /* Update message and record numbers */
+    if(MB_flag == 1){
+      msg++;
+      rec = 0;
+    }
+
+    rec++;
+
 #if 0
     printf("\n\n");
-    printf("Type:           %s\n", reader->curr_header->type);
-    printf("Data Length:    %d\n", reader->curr_header->data_length);
-    printf("Padding Length: %d\n", reader->bytes_pad);
-    printf("MB flag:        %d\n", reader->curr_header->MB_flag);
-    printf("ME flag:        %d\n", reader->curr_header->ME_flag);
+    printf("Type:           %s\n",   lime_type);
+    printf("Data Length:    %ld\n",  nbytes);
+    printf("Padding Length: %d\n",   bytes_pad);
+    printf("MB flag:        %d\n",   MB_flag);
+    printf("ME flag:        %d\n",   ME_flag);
 #endif
+
+
+    /* Skip to next record until target record is reached */
+    if (msg != msg_seek || rec != rec_seek) continue;
     
-    data_buf = (char *)malloc(sizeof(char)*(reader->bytes_total));
-    if( data_buf == (char *)NULL) { 
-      fprintf(stderr, "Couldn't malloc data buf\n");
-      exit(EXIT_FAILURE);
-    }
-
-    nbytes = reader->bytes_total;
-    status = limeReaderReadData((void *)data_buf, &nbytes, reader);
-
-    if( status < 0 ) { 
-      if( status != LIME_EOR ) { 
-	fprintf(stderr, "LIME Read Error Occurred: status= %d  %d bytes wanted, %d read\n", status,
-		reader->bytes_total, nbytes);
-	exit(EXIT_FAILURE);
+    /* Buffered copy */
+    bytes_left = nbytes;
+    while(bytes_left > (off_t)0){
+      bytes_to_copy = mino((off_t)MAXBUF,bytes_left);
+      read_bytes = bytes_to_copy;
+      status = limeReaderReadData((void *)buf, &read_bytes, reader);
+    
+      if( status < 0 && status != LIME_EOR ) { 
+	fprintf(stderr, "LIME read error occurred: status= %d", status);
+	return EXIT_FAILURE;
       }
+      if (read_bytes != bytes_to_copy) {
+	fprintf(stderr, "Read error %lld bytes wanted,%lld read\n", 
+		nbytes, read_bytes);
+	return EXIT_FAILURE;
+      }
+    
+      /* Print to stdout */
+      
+      fwrite(buf, bytes_to_copy, 1, stdout);
+      bytes_left -= bytes_to_copy;
     }
 
-    /* Print it to stdout if this is the desired record */
-    if (rec == nrec)
-    {
-      fwrite(data_buf, nbytes, 1, stdout);
-      free(data_buf);
-      break;
-    }
-
-    free(data_buf);
-    nrec++;
+    /* Quit at this record */
+    break;
   }
 
   limeDestroyReader(reader);
   fclose(fp);
 
-  exit(0);
+  return EXIT_SUCCESS;
 }   
     
   

@@ -23,5 +23,6 @@
 #define LIME_ERR_READ             ((int)-8) /**< A read error has occurred */
 #define LIME_ERR_SEEK             ((int)-9) /**< Error seeking */
 #define LIME_ERR_MBME             ((int)-10) /**< MB/ME flags incorrect */
+#define LIME_ERR_CLOSE            ((int)-11) /**< Error closing file */
 
 #endif

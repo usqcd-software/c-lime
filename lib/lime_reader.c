@@ -11,7 +11,7 @@
 int fseeko(FILE *stream, off_t offset, int whence);
 
 /* Forward declarations for internal routines */
-int skipReaderBytes(LimeReader *r, size_t bytes_to_skip);
+int skipReaderBytes(LimeReader *r, off_t bytes_to_skip);
 int readAndParseHeader(LimeReader *r);
 
 LimeReader* limeCreateReader(FILE *fp)
@@ -120,7 +120,7 @@ int limeReaderNextRecord(LimeReader *r)
 }
 
 
-int limeReaderReadData(void *dest, size_t *nbytes, LimeReader *r)
+int limeReaderReadData(void *dest, off_t *nbytes, LimeReader *r)
 {
   int status;
   int bytes_to_read;
@@ -175,11 +175,11 @@ int limeReaderCloseRecord(LimeReader *r)
    flag.  If the skip takes us past the end of the data in the current
    record, skip to end of the record and return an error. */
 
-int skipReaderBytes(LimeReader *r, size_t bytes_to_skip)
+int skipReaderBytes(LimeReader *r, off_t bytes_to_skip)
 {
 
   int status = LIME_SUCCESS;
-  size_t bytes_to_seek;
+  off_t bytes_to_seek;
 
   /* No backing up */
   if(bytes_to_skip < 0)return LIME_ERR_SEEK;
@@ -254,12 +254,17 @@ char *limeReaderType(LimeReader *r){
   return r->curr_header->type;
 }
 
-/* Return number of bytes in current record */
-size_t limeReaderBytes(LimeReader *r){
-  if(r == NULL)return 0;
+/* Return number of total bytes in current record */
+off_t limeReaderBytes(LimeReader *r){
+  if(r == NULL)return -1;
   return r->bytes_total;
 }
 
+/* Return number of padding bytes in current record */
+size_t limeReaderPadBytes(LimeReader *r){
+  if(r == NULL)return -1;
+  return r->bytes_pad;
+}
 
 /* Entrance assumption to this function is that:
    i) The stream pointer is pointing to the beginning of 
@@ -273,7 +278,7 @@ int readAndParseHeader(LimeReader *r)
   unsigned int i_version;
   int i_MB, i_ME;
   n_uint32_t i_magic_no;
-  size_t  i_data_length;
+  off_t  i_data_length;
   unsigned char *typebuf;
   int status;
   char myname[] = "lime::readAndParseHeader";
