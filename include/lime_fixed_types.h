@@ -1,6 +1,8 @@
 #ifndef LIME_FIXED_TYPES_H
 #define LIME_FIXED_TYPES_H
 
+#include "lime_config.h"
+
 #if HAVE_STDINT_H
 #include <stdint.h>
 #else
