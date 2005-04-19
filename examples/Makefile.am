@@ -11,7 +11,8 @@ LDADD = @LIBS@ -llime
 #
 # The programs to build
 #
-check_PROGRAMS = lime_contents lime_writer_test1 lime_extract_record lime_pack lime_unpack
+bin_PROGRAMS = lime_contents lime_extract_record lime_pack lime_unpack
+check_PROGRAMS = lime_writer_test1
 
 #
 # The program and its dependencies
