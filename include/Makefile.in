@@ -135,6 +135,7 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 include_HEADERS = lime.h lime_binary_header.h lime_defs.h lime_fixed_types.h lime_header.h lime_reader.h lime_utils.h lime_writer.h lime_fseeko.h lime_config.h
 nodist_include_HEADERS = lime_config_internal.h
+EXTRA_DIST = lime_config_internal.h.in
 all: lime_config_internal.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
