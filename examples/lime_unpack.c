@@ -152,16 +152,18 @@ int main(int argc, char *argv[])
 	  return EXIT_FAILURE;
 	}
 	if (read_bytes != bytes_to_copy) {
-	  fprintf(stderr, "Read error %ld bytes wanted,%ld read\n", 
-		  nbytes, read_bytes);
+	  fprintf(stderr, "Read error %llu bytes wanted,%llu read\n", 
+		  (unsigned long long)nbytes, 
+		  (unsigned long long)read_bytes);
 	  return EXIT_FAILURE;
 	}
     
 	/* Write to the payload file */
 	wrote_bytes = fwrite(buf,1,bytes_to_copy,fp_dest);
 	if((off_t)wrote_bytes != nbytes){
-	  fprintf(stderr,"Error writing %s.  Wrote %d bytes but wanted %ld\n",
-		  filename,wrote_bytes, nbytes);
+	  fprintf(stderr,"Error writing %s.  Wrote %llu bytes but wanted %llu\n",
+		  filename,(unsigned long long)wrote_bytes, 
+		  (unsigned long long)nbytes);
 	  return EXIT_FAILURE;
 	}
 	

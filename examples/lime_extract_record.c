@@ -117,7 +117,7 @@ int main(int argc, char *argv[])
       }
       if (read_bytes != bytes_to_copy) {
 	fprintf(stderr, "Read error %lld bytes wanted,%lld read\n", 
-		nbytes, read_bytes);
+		(unsigned long long)nbytes, (unsigned long long)read_bytes);
 	return EXIT_FAILURE;
       }
     

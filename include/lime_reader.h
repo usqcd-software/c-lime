@@ -13,11 +13,14 @@ typedef struct {
   int is_last;           /**< Is  the last record */
   int header_nextP;      /**< Are we supposed to be reading a header? */
   FILE *fp;              /**< The input file stream */
-  int eorP;              /**< End of record */
   LimeRecordHeader *curr_header; /**< The current record header */
 
-  off_t bytes_left;      /**< Data bytes left in the current record */
+  off_t bytes_left;      /**< Data bytes still unread in the current record */
   off_t bytes_total;     /**< Total data bytes in the current record */
+  off_t rec_ptr;         /**< Next byte to be read relative to 
+			      the start of the record payload.
+			      ranges 0 to bytes_total - 1 */
+  off_t rec_start;       /**< File pointer at start of record payload */
   size_t bytes_pad;      /**< Padding bytes at end of current record */
 } LimeReader;
 
@@ -27,6 +30,20 @@ typedef struct {
  *  \returns a LimerReader*, on error NULL is returned
  */
 LimeReader* limeCreateReader(FILE *fp);
+
+/** \brief Set file pointer to a new position (assumed to start a LIME record)
+ *  
+ *  \param r is the LIME reader
+ *  \param offset is the new file pointer.
+ *  \returns a LimerReader*, on error NULL is returned
+ */
+int limeSetReaderPointer(LimeReader *r, off_t offset);
+
+/** \brief Get the file pointer of the next LIME record
+ *  
+ *  \param  r is the LIME reader
+ */
+off_t limeGetReaderPointer(LimeReader *r);
 
 /** \brief Destroy a LIME reader 
  *
@@ -109,6 +126,15 @@ int limeReaderCloseRecord(LimeReader *r);
 
 int limeReaderSeek(LimeReader *r, off_t offset, int whence);
 
+/** \brief Sets the LIME reader state to a prescribed state
+ *         and positions the file accordingly.
+ *  \params rdest our private LIME reader
+ *  \params rsrc LIME reader whose state we want to duplicate.
+ *  \returns a status code
+ */
+int limeReaderSetState(LimeReader *rdest, LimeReader *rsrc );
+
 int limeEOM(LimeReader *r);
+
 
 #endif

@@ -75,7 +75,7 @@ int main(int argc, char *argv[])
     printf("Message:        %d\n", msg);
     printf("Record:         %d\n", rec);
     printf("Type:           %s\n", lime_type);
-    printf("Data Length:    %d\n", nbytes);
+    printf("Data Length:    %llu\n", (unsigned long long)nbytes);
     printf("Padding Length: %d\n", bytes_pad);
     printf("MB flag:        %d\n", MB_flag);
     printf("ME flag:        %d\n", ME_flag);
@@ -92,8 +92,9 @@ int main(int argc, char *argv[])
 
     if( status < 0 ) { 
       if( status != LIME_EOR ) { 
-	fprintf(stderr, "LIME read error occurred: status= %d  %ld bytes wanted, %ld read\n", 
-		status, nbytes, read_bytes);
+	fprintf(stderr, "LIME read error occurred: status= %d  %llu bytes wanted, %llu read\n", 
+		status, (unsigned long long)nbytes, 
+		(unsigned long long)read_bytes);
 	return EXIT_FAILURE;
       }
     }

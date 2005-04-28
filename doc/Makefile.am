@@ -7,7 +7,7 @@ VPATH=$(DOCSRCDIR)
 
 LATEX = latex
 
-VER     = 1p1
+VER     = 1p2
 HTMLDIR = html
 PS      = lime_${VER}.ps
 SRC     = lime_${VER}.tex

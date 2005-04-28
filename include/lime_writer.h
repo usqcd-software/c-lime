@@ -12,9 +12,13 @@ typedef struct {
   int last_written;        /**< has the last record been written */
   FILE* fp;                /**< What file are we writing to */
   int header_nextP;        /**< Are we to write a header next or data */
-  off_t bytes_total;      /**< Total no of bytes in this record */
-  off_t bytes_left;       /**< The number of bytes left in the current
-                                 record */
+  off_t bytes_total;       /**< Total no of bytes in this record */
+  off_t bytes_left;        /**< The number of bytes left to write in
+                                 the current record */
+  off_t rec_ptr;           /**< Next byte to be written relative to 
+			       the start of the record payload.
+			       ranges 0 to bytes_total - 1 */
+  off_t rec_start;         /**< File pointer at start of record payload */
   size_t bytes_pad;        /**< The number of bytes to pad the record */
   int isLastP;             /**< Is this the last record in the message? */
 } LimeWriter;
@@ -59,9 +63,18 @@ int limeWriterCloseRecord(LimeWriter *w);
 /** \brief Seek bytes within current open record 
  *  \params r is a pointer to a LimeWriter
  *  \params offset counts bytes from the current position ("WHENCE")
- *
+ *    or relative to the start of the binary data.
+ *  \params whence = SEEK_CUR or SEEK_SET
  *  \returns a status code
  */
 int limeWriterSeek(LimeWriter *r, off_t offset, int whence);
+
+/** \brief Sets the LIME writer state to a prescribed state
+ *         and positions the file accordingly.
+ *  \params wdest our private LIME writer
+ *  \params wsrc LIME writer whose state we want to duplicate.
+ *  \returns a status code
+ */
+int limeWriterSetState(LimeWriter *wdest, LimeWriter *wsrc);
 
 #endif

@@ -3,7 +3,7 @@
 \documentclass{article}
 \begin{document}
 \title{
-   LIME \\{\large Version 1.1}
+   LIME \\{\large Version 1.2}
 }
 \author{ SciDAC Software Coordinating Committee}
 
@@ -335,11 +335,142 @@ source}.  The actual number of bytes written is returned in {\tt
 nbytes}.  Return codes are {\tt LIME\_SUCCESS}, {\tt LIME\_ERR\_PARAM},
 and {\tt LIME\_ERR\_WRITE}.
 
+\paragraph{Support for random access reading}
+
+Several utilities are provided for making it possible to do random
+access reading from a LIME file.
+
+%
+\begin{flushleft}
+  \begin{tabular}{|l|l|}
+  \hline
+  Prototypes     & \verb|off_t limeGetReaderPointer(LimeReader *r);| \\
+\hline
+  Example  & \verb|offset = limeGetReaderPointer(r);| \\
+   \hline
+ \end{tabular}
+\end{flushleft}
+%
+Get the ANSI file pointer to the next LIME record (current pointer if
+no record header has been read).
+
+%
+\begin{flushleft}
+  \begin{tabular}{|l|l|}
+  \hline
+  Prototypes     & \verb|int limeSetReaderPointer(LimeReader *r, off_t offset);| \\
+\hline
+  Example  & \verb|status = limeSetReaderPointer(r, offset);| \\
+   \hline
+ \end{tabular}
+\end{flushleft}
+%
+The offset must point to the beginning of a LIME record, or the next
+read operation will result in an error.  Sets the ANSI file pointer to
+the specified absolute byte position and resets the reader state
+accordingly.
+
+%
+\begin{flushleft}
+  \begin{tabular}{|l|l|}
+  \hline
+  Prototypes     & \verb|int limeReaderSeek(LimeReader *r, off_t offset, int whence);| \\
+\hline
+  Example  & \verb|status = limeReaderSeek(r, offset, whence);| \\
+   \hline
+ \end{tabular}
+\end{flushleft}
+%
+Set the record payload pointer as specified by |verb|offset| within
+the current LIME record payload.  Possible values of \verb|whence| are
+\verb|SEEK_SET| or \verb|SEEK_CUR| with a behavior analogous to the
+corresponding \verb|fseeko| parameters.  With \verb|SEEK_SET| the byte
+position is specified relative to the start of the payload (offset 0).
+Seeks to a position before the beginning of the payload result in
+setting the pointer to zero.  Seeks beyond the end of the payload
+result in setting the pointer to the byte following the last byte in
+the payload.  When a record is opened the record payload pointer is
+set to zero, as would be expected.
+
+
+\paragraph{Support for random access writing}
+
+At the level of a whole LIME record, written additions to an existing
+file are done only by appending to the file.  So there are no writer
+counterparts to the set/get reader pointer calls. Since the user is
+responsible for opening the file with an ANSI \verb|fopen| call, the
+user is free to open the file for appending, in which case LIME
+records are appended to the existing file.
+
+However, random access writing is supported inside an open LIME record
+with the following function.
+
+%
+\begin{flushleft}
+  \begin{tabular}{|l|l|}
+  \hline
+  Prototypes     & \verb|int limeWriterSeek(LimeWriter *w, off_t offset, int whence);| \\
+\hline
+  Example  & \verb|status = limeWriterSeek(w, offset, whence);| \\
+   \hline
+ \end{tabular}
+\end{flushleft}
+%
+Set the record payload pointer as specified by |verb|offset| within
+the current LIME record payload.  Possible values of \verb|whence| are
+\verb|SEEK_SET| or \verb|SEEK_CUR| with a behavior analogous to the
+corresponding \verb|fseeko| parameters.  With \verb|SEEK_SET| the byte
+position is specified relative to the start of the payload (offset 0).
+Seeks to a position before the beginning of the payload result in
+setting the pointer to zero.  Seeks beyond the end of the payload
+result in setting the pointer to the byte following the last byte in
+the payload.  When a record is opened the record payload pointer is
+set to zero, as would be expected.
+
+
+\paragraph{Support for multi-threaded read and write access to a file}
+
+%
+\begin{flushleft}
+  \begin{tabular}{|l|l|}
+  \hline
+  Prototypes     & \verb|int limeReaderSetState(LimeReader *rdest, LimeReader *rsrc );| \\
+\hline
+  Example  & \verb|status = limeReaderSetState(&rdest, &rsrc);| \\
+   \hline
+ \end{tabular}
+\end{flushleft}
+%
+The reader state \verb|rdest| is copied from \verb|rsrc|.  Both
+structures must have been created by the caller.  
+
+This call makes it possible for two or more processes to open the same
+LIME file for reading.  The primary and secondary processes first open
+the file and create LIME readers.  The primary process positions the
+file according to user needs.  It then broadcasts its reader structure
+to the secondary processes.  They use this call to synchronize their
+LIME readers to the primary reader.
+
+%
+\begin{flushleft}
+  \begin{tabular}{|l|l|}
+  \hline
+  Prototypes     & \verb|int limeWriterSetState(LimeWriter *wdest, LimeWriter *wsrc );| \\
+\hline
+  Example  & \verb|status = limeWriterSetState(&wdest, &wsrc);| \\
+   \hline
+ \end{tabular}
+\end{flushleft}
+%
+The writer state \verb|wdest| is copied from \verb|wsrc|.  Both
+structures must have been created by the caller.  
+
+The anticipated use case is analogous to that of the LIME reader.
 
 \paragraph{LIME return status codes}
 
 The following table lists return codes.  The macros are defined by the LIME
-header {\tt lime.h}.
+header {\tt lime\_defs.h}.
 
 \begin{center}
   \begin{tabular}{ll}

@@ -5,7 +5,7 @@
 #include <lime_utils.h>
 #include <lime_binary_header.h>
 
-/* If we don't have fseeko this fill define it */
+/* If we don't have fseeko, define it */
 #include <lime_fseeko.h>
 
 #undef LIME_DEBUG
@@ -28,11 +28,49 @@ LimeReader* limeCreateReader(FILE *fp)
   ret_val->header_nextP = 1;
   ret_val->fp = fp;
   ret_val->curr_header = (LimeRecordHeader *)NULL;
-  ret_val->bytes_left = 0;
+  ret_val->bytes_left = 0;     /* Obsolete value */
   ret_val->bytes_total = 0;
+  ret_val->rec_ptr = 0;
+  ret_val->rec_start = 0;
   ret_val->bytes_pad = 0;
-  ret_val->eorP = 0;
   return ret_val;
+}
+
+/* Move reader to a new position in the file.  We assume the new
+   position marks the beginning of a LIME record, so we reset the
+   reader state accordingly.  For random access inside an open LIME
+   record, see limeReaderSeek. */
+   
+int limeSetReaderPointer(LimeReader *r, off_t offset){
+  int status;
+
+  /* Position file as requested */
+  status = fseeko(r->fp, offset, SEEK_SET);  
+  if(status < 0)return LIME_ERR_SEEK;
+  r->first_read = 0;
+  r->is_last = 0;
+  r->header_nextP = 1;
+  r->curr_header = (LimeRecordHeader *)NULL;
+  r->bytes_left = 0;     /* Obsolete value */
+  r->bytes_total = 0;
+  r->rec_ptr = 0;
+  r->rec_start = 0;
+  r->bytes_pad = 0;
+  
+  return LIME_SUCCESS;
+}
+
+/* Report the file pointer position of the beginning of the next LIME
+   record or return the current position if we haven't read a header,
+   yet. */
+
+off_t limeGetReaderPointer(LimeReader *r){
+  /* If we haven't read anything yet, we don't know anything. */
+  if(r->first_read == 0)
+    return ftello(r->fp);
+  else{
+    return r->rec_start + r->bytes_total + r->bytes_pad;
+  }
 }
 
 void limeDestroyReader(LimeReader *r)
@@ -64,14 +102,13 @@ int limeReaderNextRecord(LimeReader *r)
        -- this call may allocate memory */
     status = readAndParseHeader(r);
 
+    /* We allow the caller to handle the error condition. */
+    /* An EOF condition could be normal here. */
     if ( status < 0 ) { 
       if( status != LIME_EOF )printf("%s returning %d\n",myname,status);
       return status;
     }
-
-    /* We have started a new record */
-    r->eorP = 0;
-
+    r->first_read = 1;
   }
   else { 
     /* We have read the first record -- so presumably we have 
@@ -79,18 +116,12 @@ int limeReaderNextRecord(LimeReader *r)
 
     /* In this case what we must do is skip to the end of the current
        record */
-    status = skipReaderBytes(r, r->bytes_left);
+    status = skipReaderBytes(r, r->bytes_total - r->rec_ptr);
     if ( status < 0 ) { 
       if( status != LIME_EOF )printf("%s returns %d\n",myname,status);
       return status;
     }
     
-    /* We now allow multimessage files.  So the caller has to check the
-       MB Flag.  After the end of a message, we expect a new message or EOF*/
-    if( r->is_last ) { 
-      r->first_read = 0;
-    }
-
     /* Right we have now skipped to the end of the previous 
        record and we believe it not to be the last record 
        so we can now safely destroy the current record header 
@@ -100,20 +131,18 @@ int limeReaderNextRecord(LimeReader *r)
       if( status != LIME_EOF )printf("%s returns %d\n",myname,status);
       return status;
     }
-    /* We have started a new record */
-    r->eorP = 0;
   }
 
-
-  /* If we were about to read the first record 
-     then make note of the fact that we have just read it */
-  if( r->first_read == 0 ) {
-    r->first_read = 1;
+  if(r->curr_header == NULL) {
+    printf("%s No header info on this node\n",myname);
+    return LIME_ERR_PARAM;
   }
 
   r->is_last = r->curr_header->ME_flag;
   r->bytes_left = r->curr_header->data_length;
   r->bytes_total = r->curr_header->data_length;
+  r->rec_ptr = 0;
+  r->rec_start = ftello(r->fp);
   r->bytes_pad = lime_padding(r->bytes_total);
 
   return status;
@@ -127,15 +156,14 @@ int limeReaderReadData(void *dest, off_t *nbytes, LimeReader *r)
   int bytes_read;
 
   /* Check if we are at the end of the record */
-  if( r->bytes_left == 0 ) {
-    r->eorP = 1;
+  if( r->rec_ptr == r->bytes_total ) {
     return LIME_EOR;
   }
 
   /* If we are not at the end then read how much we have to */
   if( *nbytes > 0 ) { 
-    if( *nbytes > r->bytes_left ) {
-      bytes_to_read = r->bytes_left;
+    if( *nbytes + r->rec_ptr > r->bytes_total ) {
+      bytes_to_read = r->bytes_total - r->rec_ptr;
     }
     else { 
       bytes_to_read = *nbytes;
@@ -149,88 +177,87 @@ int limeReaderReadData(void *dest, off_t *nbytes, LimeReader *r)
       return LIME_ERR_READ;
 
     r->bytes_left -= bytes_read;
-
-    /* If as a result of this read we have reached the EOR then skip
-       any padding */
-    if( r->bytes_left == 0 ) { 
-      status = skipReaderBytes(r, 0);
-      if (status < 0 ) return status;
-    }
+    r->rec_ptr += bytes_read;
   }
 
   return LIME_SUCCESS;
 }
 
-/* Advance to end of the current record */
-/* This is good management when we have more than one node reading
-   from the same file */
+/* Advance to beginning of the next record */
 int limeReaderCloseRecord(LimeReader *r)
 {
-  /* printf("limeReaderCloseRecord not implemented\n"); */
-  return 0;
+  int status;
+
+  /* Advance to the beginning of the next record */
+  status = skipReaderBytes(r, r->bytes_total - r->rec_ptr);
+
+  return status;
 }
       
-/* Skip bytes within the current record.  If the skip takes us to the
-   end of the data, skip any padding as well and set the end of record
-   flag.  If the skip takes us past the end of the data in the current
-   record, skip to end of the record and return an error. */
+/* Skip bytes within the current record.  Positive and negative
+   offsets are allowed.  If the skip takes us to the end of the data,
+   skip any padding as well.  If the skip takes us out of bounds of
+   the data in the current record, skip to nearest boundary of the
+   record and return an error. */
 
 int skipReaderBytes(LimeReader *r, off_t bytes_to_skip)
 {
 
-  int status = LIME_SUCCESS;
-  off_t bytes_to_seek;
+  int status;
+  off_t new_rec_ptr;
 
-  /* No backing up */
-  if(bytes_to_skip < 0)return LIME_ERR_SEEK;
-
-  /* Can't skip if we are at the end of the record already */
-  if(r->eorP == 1){
-    /* This is an error if the skip is non null */
-    if(bytes_to_skip > 0){
-      printf("Seeking %lu while already at end of record\n",
-	     (unsigned long)bytes_to_skip);
-      return LIME_ERR_SEEK;
-    }
-    /* If null skip and at end of record, ignore the request */
-    else
-      return status;
-  }
+  new_rec_ptr = r->rec_ptr + bytes_to_skip;
 
   /* Prevent skip past the end of the data */
-  if(r->bytes_left < bytes_to_skip){
-    bytes_to_skip = r->bytes_left;
-    printf("Seeking past end of data\n");
+  if( new_rec_ptr > r->bytes_total ){
+    new_rec_ptr = r->bytes_total;
+    printf("Seeking past end of data\n");fflush(stdout);
     status = LIME_ERR_SEEK;
   }
 
-  /* If there will be no bytes left, include padding in the seek */
-  bytes_to_seek = bytes_to_skip;
-  if(r->bytes_left == bytes_to_skip)
-    bytes_to_seek += r->bytes_pad;
-    
+  /* Prevent skips before the beginning of the data */
+  /* In this case set the new pointer to the beginning of the record */
+  if(new_rec_ptr < 0){
+    new_rec_ptr = 0;
+    printf("Seeking before beginning end of data\n");fflush(stdout);
+    status = LIME_ERR_SEEK;
+  }
+
   /* Seek */
-  if(bytes_to_seek > 0){
-    status = fseeko(r->fp, (off_t)bytes_to_seek, SEEK_CUR);
-    if(status < 0){
-      return LIME_ERR_SEEK;
-      printf("fseek returned %d\n",status);
-    }
+  /* If there will be no bytes left, include padding in the seek */
+  if(new_rec_ptr == r->bytes_total){
+    status = fseeko(r->fp, r->rec_start + new_rec_ptr + r->bytes_pad, 
+		    SEEK_SET);
+  }
+  else{
+    status = fseeko(r->fp, r->rec_start + new_rec_ptr, SEEK_SET);
+  }
+
+  if(status < 0){
+    printf("fseek returned %d\n",status);fflush(stdout);
+    return LIME_ERR_SEEK;
   }
 
   /* Update the reader state */
-  r->bytes_left -= bytes_to_skip;
-
-  if(r->bytes_left == 0)
-      r->eorP = 1;
+  r->rec_ptr = new_rec_ptr;
   
-  return status;
-
+  return LIME_SUCCESS;
 }
 
 int limeReaderSeek(LimeReader *r, off_t offset, int whence){
-  fprintf(stderr, "limeReaderSeek not implemented yet\n");
-  return LIME_ERR_READ;
+  int status;
+
+  if(whence == SEEK_CUR){
+    status = skipReaderBytes(r, offset);
+  }
+  else if(whence == SEEK_SET){
+    status = skipReaderBytes(r, offset - r->rec_ptr);
+  }
+  else{
+    fprintf(stderr, "limeReaderSeek code %x not implemented yet\n",whence);  
+    status = LIME_ERR_READ;
+  }
+  return status;
 }
 
 
@@ -239,30 +266,35 @@ int limeReaderSeek(LimeReader *r, off_t offset, int whence){
 /* Return MB flag in current header */
 int limeReaderMBFlag(LimeReader *r){
   if(r == NULL)return -1;
+  if(r->curr_header == NULL)return -1;
   return r->curr_header->MB_flag;
 }
 
 /* Return ME flag in current header */
 int limeReaderMEFlag(LimeReader *r){
   if(r == NULL)return -1;
+  if(r->curr_header == NULL)return -1;
   return r->curr_header->ME_flag;
 }
 
 /* Return pointer to LIME type string in current header */
 char *limeReaderType(LimeReader *r){
   if(r == NULL)return NULL;
+  if(r->curr_header == NULL)return NULL;
   return r->curr_header->type;
 }
 
 /* Return number of total bytes in current record */
 off_t limeReaderBytes(LimeReader *r){
   if(r == NULL)return -1;
+  if(r->curr_header == NULL)return -1;
   return r->bytes_total;
 }
 
 /* Return number of padding bytes in current record */
 size_t limeReaderPadBytes(LimeReader *r){
   if(r == NULL)return -1;
+  if(r->curr_header == NULL)return -1;
   return r->bytes_pad;
 }
 
@@ -281,10 +313,12 @@ int readAndParseHeader(LimeReader *r)
   off_t  i_data_length;
   unsigned char *typebuf;
   int status;
+  int msg_begin = 1;
   char myname[] = "lime::readAndParseHeader";
 
   /* Destroy any old header structure kicking about */
   if( r->curr_header != (LimeRecordHeader *)NULL ) { 
+    msg_begin = r->is_last;   /* Remember whether we finished a message */
     limeDestroyHeader(r->curr_header);
     r->curr_header = (LimeRecordHeader *)NULL;
   }
@@ -374,10 +408,9 @@ int readAndParseHeader(LimeReader *r)
 #endif
 
   /* If we are the first packet we MUST have MB flag set */
-  if( (r->first_read == 0 && i_MB == 0) || 
-      (r->first_read == 1 && i_MB == 1 )) { 
-    fprintf(stderr, "%s MB Flag incorrect: first_read = %d MB=%d \n",
-	    myname, r->first_read, i_MB);
+  if( msg_begin != i_MB ) { 
+    fprintf(stderr, "%s MB Flag incorrect: last ME = %d MB=%d \n",
+	    myname, msg_begin, i_MB);
     exit(EXIT_FAILURE);
   }
 
@@ -394,6 +427,33 @@ int readAndParseHeader(LimeReader *r)
   return LIME_SUCCESS;
 }
 
+/* Manipulator to set the reader to a prescribed state.  We use this
+   functionality to synchronize multinode reading from the same file.
+   To synchronize, have the master node call limeCreateReader. Have
+   the master node broadcast the resulting LimeReader structure to the
+   secondary nodes.  Have each secondary node call rdest =
+   limeCreateReader and then call this procedure with rsrc, the
+   broadcast master node's reader. */
 
-  
-  
+int limeReaderSetState(LimeReader *rdest, LimeReader *rsrc ){
+  int status;
+
+  /* Set rdest reader state from rsrc */
+  /* We do not copy the file pointer member fp or the curr_header member */
+  rdest->first_read   = rsrc->first_read   ;
+  rdest->is_last      = rsrc->is_last      ;
+  rdest->header_nextP = rsrc->header_nextP ;
+  rdest->bytes_total  = rsrc->bytes_total  ;
+  rdest->bytes_left   = rsrc->bytes_left   ;
+  rdest->rec_ptr      = rsrc->rec_ptr      ;
+  rdest->rec_start    = rsrc->rec_start    ;
+  rdest->bytes_pad    = rsrc->bytes_pad    ;
+
+  /* Now make the system state agree with the reader state */
+  status = fseeko(rdest->fp, rdest->rec_start + rdest->rec_ptr, SEEK_SET);
+  if(status < 0){
+    printf("fseek returned %d\n",status);fflush(stdout);
+    return LIME_ERR_SEEK;
+  }
+  return LIME_SUCCESS;
+}

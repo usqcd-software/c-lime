@@ -1,15 +1,17 @@
 /* Create a LIME test file */
 /* Balint Joo 2003 */
 /* 12/31/04 C. DeTar added more records to file */
+/* 4/17/05  C. DeTar changed lyrics and added seek test */
 
 #include <stdio.h>
 #include <lime.h>
 #include <string.h>
 #include <stdlib.h>
 
-int write_rec(LimeWriter *writer, int MB_flag, int ME_flag, char message[], char lime_type[]){
+int write_rec(LimeWriter *writer, int MB_flag, int ME_flag, int shuffle,
+	      char message[], char lime_type[]){
   off_t totbytes = strlen(message);
-  off_t bytes;
+  off_t bytes, seek;
   LimeRecordHeader *h;
   int status;
   char *bufstart;
@@ -30,29 +32,71 @@ int write_rec(LimeWriter *writer, int MB_flag, int ME_flag, char message[], char
 
   /* Write the record in pieces just to test multiple calls */
 
-  fprintf(stderr, "Writing fist part of data\n");
-  fflush(stderr);
   bufstart = message;
-  bytes = strlen(message)/2;
-  status = limeWriteRecordData(bufstart, &bytes, writer);
+  bytes = totbytes/2;
 
-  if( status < 0 ) { 
-    fprintf(stderr, "LIME write error %d\n", status);
-    return EXIT_FAILURE;
-  }
-  fprintf(stderr, "Wrote %d bytes\n", bytes);
+  if(!shuffle)
+    {
+      fprintf(stderr, "Writing first part of data\n"); fflush(stderr);
+      status = limeWriteRecordData(bufstart, &bytes, writer);
+      
+      if( status != LIME_SUCCESS ) { 
+	fprintf(stderr, "LIME write error %d\n", status);
+	return EXIT_FAILURE;
+      }
+      fprintf(stderr, "Wrote %llu bytes\n", (unsigned long long)bytes);
 
-  bufstart += bytes;
-  bytes = strlen(message)-bytes;
-  fprintf(stderr, "Writing second part of data\n");
-  fflush(stderr);
-  status = limeWriteRecordData(bufstart, &bytes, writer);
-  if( status < 0 ) { 
-    fprintf(stderr, "LIME write error %d\n", status);
-    return EXIT_FAILURE;
-  }
-  
-  fprintf(stderr, "Wrote %d bytes\n", bytes);
+      bufstart += bytes;
+      bytes = totbytes - bytes;
+      fprintf(stderr, "Writing second part of data\n"); fflush(stderr);
+      status = limeWriteRecordData(bufstart, &bytes, writer);
+
+      if( status != LIME_SUCCESS ) { 
+	fprintf(stderr, "LIME write error %d\n", status);
+	return EXIT_FAILURE;
+      }
+      fprintf(stderr, "Wrote %llu bytes\n", (unsigned long long)bytes);
+    }
+  else
+    {
+      seek = strlen(message)-bytes;
+      bufstart += seek;
+
+      fprintf(stderr, "Seeking to second part of record\n"); fflush(stderr);
+      status = limeWriterSeek(writer, seek, SEEK_SET);
+      if( status != LIME_SUCCESS ) { 
+	fprintf(stderr, "LIME seek error %d\n", status);
+	return EXIT_FAILURE;
+      }
+
+      fprintf(stderr, "Writing second part of data\n"); fflush(stderr);
+      status = limeWriteRecordData(bufstart, &bytes, writer);
+      if( status != LIME_SUCCESS ) { 
+	fprintf(stderr, "LIME write error %d\n", status);
+	return EXIT_FAILURE;
+      }
+      fprintf(stderr, "Wrote %llu bytes\n", (unsigned long long)bytes);
+
+      bufstart -= seek;
+      bytes = seek;
+
+      fprintf(stderr, "Seeking to first part of record\n"); fflush(stderr);
+      status = limeWriterSeek(writer, -strlen(message), SEEK_CUR);
+      if( status != LIME_SUCCESS ) { 
+	fprintf(stderr, "LIME seek error %d\n", status);
+	return EXIT_FAILURE;
+      }
+
+      fprintf(stderr, "Writing first part of data\n"); fflush(stderr);
+      status = limeWriteRecordData(bufstart, &bytes, writer);
+      if( status != LIME_SUCCESS ) { 
+	fprintf(stderr, "LIME write error %d\n", status);
+	return EXIT_FAILURE;
+      }
+      fprintf(stderr, "Wrote %llu bytes\n", (unsigned long long)bytes);
+
+      status = limeWriterCloseRecord(writer);
+    }
 }
 
 int main(int argc, char *argv[]) 
@@ -64,7 +108,7 @@ int main(int argc, char *argv[])
   FILE *fp;
 
   /* Open the file for the LimeWriter */
-  fprintf(stderr, "Opening file\n");
+  fprintf(stderr, "Opening file %s\n", lime_file);
   fp = fopen(lime_file, "w");
   if(fp == (FILE *)NULL) { 
     fprintf(stderr, "Unable to open %s\n", lime_file);
@@ -81,9 +125,11 @@ int main(int argc, char *argv[])
 
   /* Write some messages */
 
-  write_rec(writer,1,0,"LIME Rocks Big Time", "lime-test-text1");
-  write_rec(writer,0,1,"Go LIME", "lime-test-text2");
-  write_rec(writer,1,1,"Whoa dude, like, totally", "lime-test-text3");
+  write_rec(writer,1,0,0,"Doctor! Ain't there nothin' I can take, I say", "lime-test-text1");
+  write_rec(writer,0,1,0,"Doctor! To relieve this bellyache, I say", "lime-test-text1");
+  write_rec(writer,1,0,1,"You put the lime in the coconut", "lime-test-text1");
+  write_rec(writer,0,1,1,"drink 'em both together", "lime-test-text2");
+  write_rec(writer,1,1,0,"Harry Nilsson, 1971", "lime-test-text3");
 
   limeDestroyWriter(writer);
   fclose(fp);
