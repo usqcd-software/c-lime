@@ -1,5 +1,5 @@
 AC_PREREQ(2.53)
-AC_INIT(lime, 1.1, detar@physics.utah.edu)
+AC_INIT(lime, 1.2, detar@physics.utah.edu)
 AC_CONFIG_AUX_DIR(config)
 
 AC_CONFIG_SRCDIR([include/lime_header.h])
