@@ -1,11 +1,6 @@
 
-INCFLAGS=-I@top_srcdir@/include
-
-AM_CFLAGS= $(INCFLAGS)
-
-
-AM_LDFLAGS=-L@top_builddir@/lib 
-
+AM_CFLAGS  = -I@top_srcdir@/include -I@top_builddir@/include
+AM_LDFLAGS = -L@top_builddir@/lib 
 LDADD = @LIBS@ -llime
 
 #

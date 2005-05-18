@@ -1,13 +1,5 @@
 
-INCFLAGS=-I@top_srcdir@/include
-
-AM_CFLAGS = $(INCFLAGS)
-VPATH += @top_srcdir@/lib
-VPATH += @top_srcdir@/include
-
-HDRS=lime.h lime_defs.h lime_writer.h lime_header.h lime_utils.h \
-	lime_reader.h lime_fseeko.h
-
+AM_CFLAGS = -I@top_srcdir@/include -I@top_builddir@/include
 
 lib_LIBRARIES = liblime.a
 

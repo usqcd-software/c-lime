@@ -3,7 +3,6 @@
 docdir=@prefix@/doc
 
 DOCSRCDIR=@top_srcdir@/doc
-VPATH=$(DOCSRCDIR)
 
 LATEX = latex
 
