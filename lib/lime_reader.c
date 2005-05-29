@@ -151,7 +151,6 @@ int limeReaderNextRecord(LimeReader *r)
 
 int limeReaderReadData(void *dest, off_t *nbytes, LimeReader *r)
 {
-  int status;
   int bytes_to_read;
   int bytes_read;
 

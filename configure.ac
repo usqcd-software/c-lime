@@ -10,6 +10,7 @@ AM_INIT_AUTOMAKE
 # Checks for programs.
 AC_PROG_CC
 AC_PROG_RANLIB
+AC_CHECK_TOOL(AR, ar, [ar])
 
 # Checks for type configuration
 

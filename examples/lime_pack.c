@@ -171,6 +171,7 @@ int main(int argc, char *argv[])
   MB_flag = 1;
   ME_flag = 0;  /* Tentative */
   msg = 0;
+  rec = 0;
 
   /* Loop over entries in the file list file */
 

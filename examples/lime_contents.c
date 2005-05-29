@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
     return EXIT_FAILURE;
   }
 
-  msg = 0; first = 1;
+  msg = 0; first = 1; rec = 0;
   while( (status = limeReaderNextRecord(reader)) != LIME_EOF ){
     
     if( status != LIME_SUCCESS ) { 

@@ -44,14 +44,14 @@ LimeWriter* limeCreateWriter(FILE *fp)
 
 int limeDestroyWriter(LimeWriter *s)
 {
-
-  LimeRecordHeader *h;
-  off_t nbytes = 0;
 #ifdef LIME_DEBUG
   fprintf(stderr, "Closing Lime Generator\n");
 #endif
 
 #if 0
+  LimeRecordHeader *h;
+  off_t nbytes = 0;
+
   if( s->last_written != 1 ) { 
 
 #ifdef LIME_DEBUG
