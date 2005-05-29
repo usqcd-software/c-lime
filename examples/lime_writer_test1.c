@@ -13,7 +13,7 @@ int write_rec(LimeWriter *writer, int MB_flag, int ME_flag, int shuffle,
   off_t totbytes = strlen(message);
   off_t bytes, seek;
   LimeRecordHeader *h;
-  int status;
+  int status=EXIT_SUCCESS;
   char *bufstart;
 
   /* Write record header */
@@ -97,6 +97,7 @@ int write_rec(LimeWriter *writer, int MB_flag, int ME_flag, int shuffle,
 
       status = limeWriterCloseRecord(writer);
     }
+  return status;
 }
 
 int main(int argc, char *argv[]) 
