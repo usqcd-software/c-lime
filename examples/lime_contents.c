@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <lime.h>
+#define MAX_BYTES 64000
 
 /* Scan for non-ASCII characters */
 /* Return true if all characters are ASCII */
@@ -81,31 +82,36 @@ int main(int argc, char *argv[])
     printf("ME flag:        %d\n", ME_flag);
     
     /* TO DO: Buffer the input */
-    data_buf = (char *)malloc(nbytes+1);
-    if( data_buf == (char *)NULL) { 
-      fprintf(stderr, "Couldn't malloc data buf\n");
-      return EXIT_FAILURE;
-    }
-
-    read_bytes = nbytes;
-    status = limeReaderReadData((void *)data_buf, &read_bytes, reader);
-
-    if( status < 0 ) { 
-      if( status != LIME_EOR ) { 
-	fprintf(stderr, "LIME read error occurred: status= %d  %llu bytes wanted, %llu read\n", 
-		status, (unsigned long long)nbytes, 
-		(unsigned long long)read_bytes);
+    if(nbytes < MAX_BYTES){
+      data_buf = (char *)malloc(nbytes+1);
+      if( data_buf == (char *)NULL) { 
+	fprintf(stderr, "Couldn't malloc data buf\n");
 	return EXIT_FAILURE;
       }
+      
+      read_bytes = nbytes;
+      status = limeReaderReadData((void *)data_buf, &read_bytes, reader);
+      
+      if( status < 0 ) { 
+	if( status != LIME_EOR ) { 
+	  fprintf(stderr, "LIME read error occurred: status= %d  %llu bytes wanted, %llu read\n", 
+		  status, (unsigned long long)nbytes, 
+		  (unsigned long long)read_bytes);
+	  return EXIT_FAILURE;
+	}
+      }
+      
+      data_buf[nbytes]='\0';
+      if(!all_ascii(data_buf, nbytes))
+	printf("Data:           [Binary data]\n");
+      else
+	printf("Data:           \"%s\" \n", data_buf);
+      
+      free(data_buf);
     }
-
-    data_buf[nbytes]='\0';
-    if(!all_ascii(data_buf, nbytes))
-      printf("Data:           [Binary data]\n");
-    else
-      printf("Data:           \"%s\" \n", data_buf);
-
-    free(data_buf);
+    else{
+	printf("Data:           [Long record skipped]\n");
+    }
 
   }
 

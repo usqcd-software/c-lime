@@ -254,7 +254,7 @@ int limeReaderSeek(LimeReader *r, off_t offset, int whence){
   }
   else{
     fprintf(stderr, "limeReaderSeek code %x not implemented yet\n",whence);  
-    status = LIME_ERR_READ;
+    status = LIME_ERR_SEEK;
   }
   return status;
 }
@@ -341,7 +341,7 @@ int readAndParseHeader(LimeReader *r)
     return LIME_ERR_READ;
   }
 
-#ifdef DEBUG
+#ifdef LIME_DEBUG
   fprintf(stderr, "%s Magic number OK: %d\n ", myname, i_magic_no);
   fflush(stderr);
 #endif
@@ -350,7 +350,7 @@ int readAndParseHeader(LimeReader *r)
 
   i_version = big_endian_short(*lime_hdr_version);
 
-#ifdef DEBUG
+#ifdef LIME_DEBUG
   fprintf(stderr, "%s Input Version: %d\n ", myname,(int)i_version);
   fflush(stderr);
 #endif
@@ -364,7 +364,7 @@ int readAndParseHeader(LimeReader *r)
     i_MB = 0;
   }
 
-#ifdef DEBUG
+#ifdef LIME_DEBUG
   fprintf(stderr, "%s MB Flag: %d\n ", myname, (int)i_MB);
   fflush(stderr);
 #endif
@@ -378,7 +378,7 @@ int readAndParseHeader(LimeReader *r)
     i_ME = 0;
   }
 
-#ifdef DEBUG
+#ifdef LIME_DEBUG
   fprintf(stderr, "%s ME Flag: %d\n ", myname, (int)i_ME);
   fflush(stderr);
 #endif
@@ -387,7 +387,7 @@ int readAndParseHeader(LimeReader *r)
 
   i_data_length = big_endian_long_long(*lime_hdr_data_len);
 
-#ifdef DEBUG
+#ifdef LIME_DEBUG
   fprintf(stderr, "%s Data Length: %d\n ", myname, (int)i_data_length);
   fflush(stderr);  
 #endif
@@ -402,16 +402,18 @@ int readAndParseHeader(LimeReader *r)
     exit(EXIT_FAILURE);
   }
 
-#ifdef DEBUG
+#ifdef LIME_DEBUG
   printf("%s: type %s\n",myname,typebuf);
 #endif
 
   /* If we are the first packet we MUST have MB flag set */
+  /**  suppressed to allow seeking withing file without penalty
   if( msg_begin != i_MB ) { 
-    fprintf(stderr, "%s MB Flag incorrect: last ME = %d MB=%d \n",
+    fprintf(stderr, "%s MB Flag incorrect: last ME = %d but current MB=%d \n",
 	    myname, msg_begin, i_MB);
     exit(EXIT_FAILURE);
   }
+  **/
 
   r->curr_header = limeCreateHeader(i_MB, i_ME,
 				    (char*)typebuf,

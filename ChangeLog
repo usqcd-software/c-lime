@@ -1,3 +1,8 @@
+Changes going from lime-1.2.1 to lime-1.2.2
+
+	Message end and begin bits are no longer checked for consistency.
+	It is the user's responsibility to assure that they are correct.
+
 Changes going from lime-1.1 to lime-1.2
 
 	Add these functions:

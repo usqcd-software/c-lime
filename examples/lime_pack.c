@@ -30,13 +30,14 @@
 
 /* These defines probably need to be config'ed */
 /* Needed by Gnu C for ftello and fseeko */
-#define _LARGEFILE_SOURCE
-#define _FILE_OFFSET_BITS 64
+/* #define _LARGEFILE_SOURCE */
+/* #define _FILE_OFFSET_BITS 64 */
 
-#include <stdio.h>
 #include <lime.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
+
 #define MAXLINE 512
 #define MAXFILENAME MAXLINE
 #define MAXLIMETYPE MAXLINE
@@ -83,7 +84,7 @@ int write_hdr(off_t bytes, char *type,
 {
   LimeRecordHeader *h;
   int status;
-  
+
   h = limeCreateHeader(MB_flag,ME_flag,type,bytes);
   status = limeWriteRecordHeader( h, dg);
   
@@ -237,7 +238,7 @@ int main(int argc, char *argv[])
 	  if ( next.ss_count <= 0 || next.eof ) ME_flag = 1;
 	    
 	  /* Announce file */
-	  printf("%2d %3d %8lld %s\n\t\t%s\n",
+	  printf("%2d %3d %8ld %s\n\t\t%s\n",
 		 msg, rec, bytes, curr.lime_type, curr.filename);
 
 	  /* Write header */

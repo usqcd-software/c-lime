@@ -1,7 +1,7 @@
-#include <lime_defs.h>
-#include <lime_header.h>
-#include <stdlib.h>
+#include <lime.h>
 #include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 /* Load LIME record header structure from parameters */
 

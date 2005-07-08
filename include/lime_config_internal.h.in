@@ -57,19 +57,19 @@
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
 
-/* The size of a `unsigned char', as computed by sizeof. */
+/* The size of `unsigned char', as computed by sizeof. */
 #undef SIZEOF_UNSIGNED_CHAR
 
-/* The size of a `unsigned int', as computed by sizeof. */
+/* The size of `unsigned int', as computed by sizeof. */
 #undef SIZEOF_UNSIGNED_INT
 
-/* The size of a `unsigned long', as computed by sizeof. */
+/* The size of `unsigned long', as computed by sizeof. */
 #undef SIZEOF_UNSIGNED_LONG
 
-/* The size of a `unsigned long long', as computed by sizeof. */
+/* The size of `unsigned long long', as computed by sizeof. */
 #undef SIZEOF_UNSIGNED_LONG_LONG
 
-/* The size of a `unsigned short', as computed by sizeof. */
+/* The size of `unsigned short', as computed by sizeof. */
 #undef SIZEOF_UNSIGNED_SHORT
 
 /* Define to 1 if you have the ANSI C header files. */

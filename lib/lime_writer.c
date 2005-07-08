@@ -368,7 +368,7 @@ int limeWriterSeek(LimeWriter *w, off_t offset, int whence){
    limeWriteRecordHeader.  Have the master node broadcast the
    resulting LimeWriter structure to the secondary nodes.  Have each
    secondary node call wdest = limeCreateWriter and then call this
-   procedure with wsrc, the broadcast master node's writer. */
+   procedure with wsrc, then broadcast master node's writer. */
 
 int limeWriterSetState(LimeWriter *wdest, LimeWriter *wsrc ){
   int status;
@@ -384,6 +384,8 @@ int limeWriterSetState(LimeWriter *wdest, LimeWriter *wsrc ){
   wdest->rec_start    = wsrc->rec_start    ;
   wdest->bytes_pad    = wsrc->bytes_pad    ;
   wdest->isLastP      = wsrc->isLastP      ;
+
+  printf("limeWriterSetState set bytes_total to %d\n",wdest->bytes_total);
 
   /* Now make the system state agree with the writer state */
   status = fseeko(wdest->fp, wdest->rec_start + wdest->rec_ptr, SEEK_SET);
