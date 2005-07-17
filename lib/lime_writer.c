@@ -385,8 +385,6 @@ int limeWriterSetState(LimeWriter *wdest, LimeWriter *wsrc ){
   wdest->bytes_pad    = wsrc->bytes_pad    ;
   wdest->isLastP      = wsrc->isLastP      ;
 
-  printf("limeWriterSetState set bytes_total to %d\n",wdest->bytes_total);
-
   /* Now make the system state agree with the writer state */
   status = fseeko(wdest->fp, wdest->rec_start + wdest->rec_ptr, SEEK_SET);
   if(status < 0){

@@ -1,3 +1,7 @@
+Changes for lime-1.2.3
+
+	Large file support is invoked with --enable-largefiles
+
 Changes going from lime-1.2.1 to lime-1.2.2
 
 	Message end and begin bits are no longer checked for consistency.

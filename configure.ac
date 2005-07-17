@@ -1,5 +1,5 @@
 AC_PREREQ(2.53)
-AC_INIT(lime, 1.2.2, detar@physics.utah.edu)
+AC_INIT(lime, 1.2.3, detar@physics.utah.edu)
 AC_CONFIG_AUX_DIR(config)
 
 AC_CONFIG_SRCDIR([include/lime_header.h])
@@ -31,6 +31,20 @@ AC_CHECK_HEADERS([stdint.h],
   AC_CHECK_SIZEOF(unsigned long)
   AC_CHECK_SIZEOF(unsigned long long)
 ]
+)
+
+# Set up large file support
+dnl
+dnl --enable-largefile
+dnl
+AC_ARG_ENABLE(largefile,
+  AC_HELP_STRING(
+  [--enable-largefile],
+  [ For files larger than 2 GB ]
+  ),
+  [ AC_MSG_NOTICE([Enabling large file support.])
+    AC_SYS_LARGEFILE
+  ]
 )
 
 # Check for the fseeko function
