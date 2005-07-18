@@ -1,3 +1,4 @@
+#include <lime_config.h>
 #include <lime.h>
 #include <stdio.h>
 #include <stdlib.h>

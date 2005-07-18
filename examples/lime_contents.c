@@ -2,6 +2,7 @@
 /* Balint Joo 2003 */
 /* C. DeTar 10/26/04 reformatted output */
 
+#include <lime_config.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <lime.h>

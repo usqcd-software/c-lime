@@ -13,6 +13,7 @@
 
 */
 
+#include <lime_config.h>
 #include <stdio.h>
 #include <lime.h>
 #include <string.h>

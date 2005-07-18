@@ -9,6 +9,7 @@
 
 */
 
+#include <lime_config.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <lime.h>

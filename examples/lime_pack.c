@@ -33,6 +33,7 @@
 /* #define _LARGEFILE_SOURCE */
 /* #define _FILE_OFFSET_BITS 64 */
 
+#include <lime_config.h>
 #include <lime.h>
 #include <string.h>
 #include <stdlib.h>

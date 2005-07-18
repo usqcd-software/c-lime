@@ -3,6 +3,7 @@
 /* 12/31/04 C. DeTar added more records to file */
 /* 4/17/05  C. DeTar changed lyrics and added seek test */
 
+#include <lime_config.h>
 #include <stdio.h>
 #include <lime.h>
 #include <string.h>

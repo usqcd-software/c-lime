@@ -6,6 +6,7 @@
       lime_extract_type <lime_file> <lime_type>
 */
 
+#include <lime_config.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <lime.h>

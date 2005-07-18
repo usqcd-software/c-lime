@@ -1,5 +1,5 @@
+#include <lime_config.h>
 #include <stdio.h>
-#include "lime_config.h"
 
 #ifndef HAVE_FSEEKO
 
