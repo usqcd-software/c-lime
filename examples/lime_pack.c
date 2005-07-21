@@ -80,7 +80,7 @@ void read_list_line(List_Line *list, FILE *fp_list)
 }
 
 
-int write_hdr(off_t bytes, char *type, 
+int write_hdr(n_uint64_t bytes, char *type, 
 	      int MB_flag, int ME_flag, LimeWriter *dg)
 {
   LimeRecordHeader *h;
@@ -100,7 +100,7 @@ int write_hdr(off_t bytes, char *type,
   return EXIT_SUCCESS;
 }
 
-int write_buf(char *buf, off_t bytes, LimeWriter *dg)
+int write_buf(char *buf, n_uint64_t bytes, LimeWriter *dg)
 {
   int status;
   
@@ -126,7 +126,7 @@ int main(int argc, char *argv[])
   char *listfile, *limefile;
   List_Line curr, next;
   char buf[MAXBUF];
-  off_t bytes, bytes_left, bytes_to_copy;
+  n_uint64_t bytes, bytes_left, bytes_to_copy;
   LimeWriter *dg;
   int MB_flag, ME_flag;
   int msg, rec;

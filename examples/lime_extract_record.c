@@ -13,10 +13,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <lime.h>
+#include <lime_fixed_types.h>
 /*#define MAXBUF 1048576*/
 #define MAXBUF 8
 
-off_t mino(off_t i, off_t j){
+n_uint64_t mino(n_uint64_t i, n_uint64_t j){
   return i < j ? i : j;
 }
 
@@ -26,7 +27,7 @@ int main(int argc, char *argv[])
   LimeReader *reader;
   FILE *fp;
   int status;
-  off_t nbytes, bytes_left, bytes_to_copy, read_bytes;
+  n_uint64_t nbytes, bytes_left, bytes_to_copy, read_bytes;
   int rec_seek,msg_seek;
   int rec, msg;
   char *lime_type;
@@ -107,8 +108,8 @@ int main(int argc, char *argv[])
     
     /* Buffered copy */
     bytes_left = nbytes;
-    while(bytes_left > (off_t)0){
-      bytes_to_copy = mino((off_t)MAXBUF,bytes_left);
+    while(bytes_left > (n_uint64_t)0){
+      bytes_to_copy = mino((n_uint64_t)MAXBUF,bytes_left);
       read_bytes = bytes_to_copy;
       status = limeReaderReadData((void *)buf, &read_bytes, reader);
     

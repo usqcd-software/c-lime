@@ -1,5 +1,6 @@
 #include <lime_config.h>
 #include <lime.h>
+#include <lime_fixed_types.h>
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -9,7 +10,7 @@
 LimeRecordHeader *limeCreateHeader(int MB_flag,
 				   int ME_flag,
 				   char *type,
-				   off_t reclen)
+				   n_uint64_t reclen)
 {
 
   LimeRecordHeader *ret_val;

@@ -16,6 +16,7 @@
 #include <lime_config.h>
 #include <stdio.h>
 #include <lime.h>
+#include <lime_fixed_types.h>
 #include <string.h>
 #include <stdlib.h>
 #define MAXFILENAME 512
@@ -23,7 +24,7 @@
 #define MAXCOMLINE 512
 #define MAXBUF 1048576
 
-off_t mino(off_t i, off_t j){
+n_uint64_t mino(n_uint64_t i, n_uint64_t j){
   return i < j ? i : j;
 }
 
@@ -37,7 +38,7 @@ int main(int argc, char *argv[])
   char buf[MAXBUF];
   char com[MAXCOMLINE];
   LimeReader *reader;
-  off_t nbytes, bytes_left, bytes_to_copy, read_bytes;
+  n_uint64_t nbytes, bytes_left, bytes_to_copy, read_bytes;
   size_t wrote_bytes;
   size_t bytes_pad;
   int MB_flag, ME_flag;
@@ -141,8 +142,8 @@ int main(int argc, char *argv[])
       /* Buffered copy */
 
       bytes_left = nbytes;
-      while(bytes_left > (off_t)0){
-	bytes_to_copy = mino((off_t)MAXBUF,bytes_left);
+      while(bytes_left > (n_uint64_t)0){
+	bytes_to_copy = mino((n_uint64_t)MAXBUF,bytes_left);
 	read_bytes = bytes_to_copy;
 
 	/* Read from the LIME file */
@@ -161,7 +162,7 @@ int main(int argc, char *argv[])
     
 	/* Write to the payload file */
 	wrote_bytes = fwrite(buf,1,bytes_to_copy,fp_dest);
-	if((off_t)wrote_bytes != nbytes){
+	if((n_uint64_t)wrote_bytes != nbytes){
 	  fprintf(stderr,"Error writing %s.  Wrote %llu bytes but wanted %llu\n",
 		  filename,(unsigned long long)wrote_bytes, 
 		  (unsigned long long)nbytes);

@@ -3,6 +3,7 @@
 
 #include <lime_defs.h>
 #include <sys/types.h>
+#include <lime_fixed_types.h>
 
 /** \brief -- The header structure for a lime record */
 typedef struct { 
@@ -10,7 +11,7 @@ typedef struct {
   int MB_flag;                 /**< Message begin Flag */
   int ME_flag;                 /**< Message end Flag */
   char *type;                  /**< The LimeType string */
-  off_t data_length;          /**< The length of the data to follow */
+  n_uint64_t data_length;        /**< The length of the data to follow */
 } LimeRecordHeader;
 
 
@@ -20,7 +21,7 @@ typedef struct {
 LimeRecordHeader *limeCreateHeader(int MB_flag,
 				   int ME_flag,
 				   char *type, 
-				   off_t reclen);
+				   n_uint64_t reclen);
 
 void limeDestroyHeader(LimeRecordHeader *h);
 

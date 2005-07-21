@@ -150,10 +150,10 @@ int limeReaderNextRecord(LimeReader *r)
 }
 
 
-int limeReaderReadData(void *dest, off_t *nbytes, LimeReader *r)
+int limeReaderReadData(void *dest, n_uint64_t *nbytes, LimeReader *r)
 {
-  int bytes_to_read;
-  int bytes_read;
+  n_uint64_t bytes_to_read;
+  n_uint64_t bytes_read;
 
   /* Check if we are at the end of the record */
   if( r->rec_ptr == r->bytes_total ) {
@@ -169,8 +169,15 @@ int limeReaderReadData(void *dest, off_t *nbytes, LimeReader *r)
       bytes_to_read = *nbytes;
     }
 
+    if((size_t)bytes_to_read != bytes_to_read){
+      printf("limeReaderReadData Can't read %llu bytes\n",
+	     (unsigned long long)bytes_to_read);
+      return LIME_ERR_READ;
+    }
+
     /* Actually read */
-    bytes_read = fread(dest, sizeof(unsigned char), bytes_to_read, r->fp);
+    bytes_read = fread(dest, sizeof(unsigned char), 
+		       (size_t)bytes_to_read, r->fp);
     *nbytes = bytes_read;
     
     if( bytes_read != bytes_to_read )
@@ -187,9 +194,17 @@ int limeReaderReadData(void *dest, off_t *nbytes, LimeReader *r)
 int limeReaderCloseRecord(LimeReader *r)
 {
   int status;
+  n_uint64_t offset;
 
   /* Advance to the beginning of the next record */
-  status = skipReaderBytes(r, r->bytes_total - r->rec_ptr);
+  offset = r->bytes_total - r->rec_ptr;
+
+  if((off_t)offset != offset){
+    printf("limeReaderCloseRecord: can't skip %llu bytes\n",offset);
+    return LIME_ERR_SEEK;
+  }
+
+  status = skipReaderBytes(r, (off_t)offset);
 
   return status;
 }
@@ -204,7 +219,8 @@ int skipReaderBytes(LimeReader *r, off_t bytes_to_skip)
 {
 
   int status;
-  off_t new_rec_ptr;
+  n_uint64_t new_rec_ptr;
+  n_uint64_t offset;
 
   new_rec_ptr = r->rec_ptr + bytes_to_skip;
 
@@ -225,13 +241,20 @@ int skipReaderBytes(LimeReader *r, off_t bytes_to_skip)
 
   /* Seek */
   /* If there will be no bytes left, include padding in the seek */
-  if(new_rec_ptr == r->bytes_total){
-    status = fseeko(r->fp, r->rec_start + new_rec_ptr + r->bytes_pad, 
-		    SEEK_SET);
-  }
+  if(new_rec_ptr == r->bytes_total)
+    offset = r->rec_start + new_rec_ptr + r->bytes_pad;
   else{
-    status = fseeko(r->fp, r->rec_start + new_rec_ptr, SEEK_SET);
+    offset = r->rec_start + new_rec_ptr;
   }
+
+  /* Guard against insufficient integer size */
+  if((off_t)offset != offset){
+    printf("skipReaderBytes: fseeko can't seek to %llu. off_t too small.\n",
+	   (unsigned long long)offset);
+    return LIME_ERR_SEEK;
+  }
+
+  status = fseeko(r->fp, (off_t)offset , SEEK_SET);
 
   if(status < 0){
     printf("fseek returned %d\n",status);fflush(stdout);
@@ -285,16 +308,16 @@ char *limeReaderType(LimeReader *r){
 }
 
 /* Return number of total bytes in current record */
-off_t limeReaderBytes(LimeReader *r){
-  if(r == NULL)return -1;
-  if(r->curr_header == NULL)return -1;
+n_uint64_t limeReaderBytes(LimeReader *r){
+  if(r == NULL)return 0;
+  if(r->curr_header == NULL)return 0;
   return r->bytes_total;
 }
 
 /* Return number of padding bytes in current record */
 size_t limeReaderPadBytes(LimeReader *r){
-  if(r == NULL)return -1;
-  if(r->curr_header == NULL)return -1;
+  if(r == NULL)return 0;
+  if(r->curr_header == NULL)return 0;
   return r->bytes_pad;
 }
 
@@ -310,7 +333,7 @@ int readAndParseHeader(LimeReader *r)
   unsigned int i_version;
   int i_MB, i_ME;
   n_uint32_t i_magic_no;
-  off_t  i_data_length;
+  n_uint64_t  i_data_length;
   unsigned char *typebuf;
   int status;
   int msg_begin = 1;
@@ -389,7 +412,7 @@ int readAndParseHeader(LimeReader *r)
   i_data_length = big_endian_long_long(*lime_hdr_data_len);
 
 #ifdef LIME_DEBUG
-  fprintf(stderr, "%s Data Length: %d\n ", myname, (int)i_data_length);
+  fprintf(stderr, "%s Data Length: %llu\n ", myname, (unsigned long long)i_data_length);
   fflush(stderr);  
 #endif
 

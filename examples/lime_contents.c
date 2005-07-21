@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <lime.h>
+#include <lime_fixed_types.h>
 #define MAX_BYTES 64000
 
 /* Scan for non-ASCII characters */
@@ -25,7 +26,7 @@ int main(int argc, char *argv[])
   LimeReader *reader;
   FILE *fp;
   int status;
-  off_t nbytes, read_bytes;
+  n_uint64_t nbytes, read_bytes;
   int msg,rec,first;
   char *lime_type;
   size_t bytes_pad;

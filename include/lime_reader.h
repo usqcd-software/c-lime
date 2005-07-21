@@ -15,12 +15,12 @@ typedef struct {
   FILE *fp;              /**< The input file stream */
   LimeRecordHeader *curr_header; /**< The current record header */
 
-  off_t bytes_left;      /**< Data bytes still unread in the current record */
-  off_t bytes_total;     /**< Total data bytes in the current record */
-  off_t rec_ptr;         /**< Next byte to be read relative to 
+  n_uint64_t bytes_left;      /**< Data bytes still unread in the current record */
+  n_uint64_t bytes_total;  /**< Total data bytes in the current record */
+  n_uint64_t rec_ptr;         /**< Next byte to be read relative to 
 			      the start of the record payload.
 			      ranges 0 to bytes_total - 1 */
-  off_t rec_start;       /**< File pointer at start of record payload */
+  n_uint64_t rec_start;       /**< File pointer at start of record payload */
   size_t bytes_pad;      /**< Padding bytes at end of current record */
 } LimeReader;
 
@@ -92,7 +92,7 @@ char *limeReaderType(LimeReader *r);
  *  \params r points to a LimeReader
  *  \returns 0 if r is null, otherwise the byte count
  */
-off_t limeReaderBytes(LimeReader *r);
+n_uint64_t limeReaderBytes(LimeReader *r);
 
 /** \brief Accessor for number of pad bytes in current record
  *  \params r points to a LimeReader
@@ -109,7 +109,7 @@ size_t limeReaderPadBytes(LimeReader *r);
  *  \returns a status code, and sets nbytes to the actual number of 
  *           bytes written.
  */
-int limeReaderReadData(void *dest, off_t *nbytes, LimeReader *r);
+int limeReaderReadData(void *dest, n_uint64_t *nbytes, LimeReader *r);
 
 /** \brief Advance to end of current record
  *  \params r points to a LimeReader

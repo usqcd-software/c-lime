@@ -51,7 +51,7 @@ int limeDestroyWriter(LimeWriter *s)
 
 #if 0
   LimeRecordHeader *h;
-  off_t nbytes = 0;
+  n_uint64_t nbytes = 0;
 
   if( s->last_written != 1 ) { 
 
@@ -139,9 +139,9 @@ int limeWriteRecordHeader( LimeRecordHeader *props, LimeWriter *d)
 }
 
 /* Write data. */
-int limeWriteRecordData( void *source, off_t *nbytes, LimeWriter* d)
+int limeWriteRecordData( void *source, n_uint64_t *nbytes, LimeWriter* d)
 {
-  off_t bytes_to_write;
+  n_uint64_t bytes_to_write;
   size_t ret_val;
 
 #ifdef LIME_DEBUG
@@ -166,8 +166,13 @@ int limeWriteRecordData( void *source, off_t *nbytes, LimeWriter* d)
     }
     
     /* Try to write so many bytes */
+    if((size_t)bytes_to_write != bytes_to_write){
+      printf("limeWriteRecordData: Can't write %llu bytes\n",
+	     (unsigned long long)bytes_to_write);
+      return LIME_ERR_WRITE;
+    }
     ret_val = fwrite((const void *)source, sizeof(unsigned char), 
-		     bytes_to_write, d->fp);
+		     (size_t)bytes_to_write, d->fp);
     
     *nbytes = ret_val;
     
@@ -310,7 +315,8 @@ int skipWriterBytes(LimeWriter *w, off_t bytes_to_skip)
 {
 
   int status;
-  off_t new_rec_ptr;  /* The new record pointer */
+  n_uint64_t new_rec_ptr;  /* The new record pointer */
+  n_uint64_t offset;
 
   /* Ignore zero. */
   if(bytes_to_skip == 0)return LIME_SUCCESS;
@@ -334,7 +340,13 @@ int skipWriterBytes(LimeWriter *w, off_t bytes_to_skip)
   }
 
   /* Seek */
-  status = fseeko(w->fp, w->rec_start + new_rec_ptr, SEEK_SET);
+  offset = w->rec_start + new_rec_ptr;
+  if((off_t)offset != offset){
+    printf("skipWriterBytes: Can't seek to %llu. off_t type too small\n",
+	   (unsigned long long)offset);
+    return LIME_ERR_SEEK;
+  }
+  status = fseeko(w->fp, (off_t)offset, SEEK_SET);
 
   if(status < 0){
     printf("fseek returned %d\n",status);fflush(stdout);
