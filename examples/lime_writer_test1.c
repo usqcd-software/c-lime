@@ -12,7 +12,8 @@
 int write_rec(LimeWriter *writer, int MB_flag, int ME_flag, int shuffle,
 	      char message[], char lime_type[]){
   off_t totbytes = strlen(message);
-  off_t bytes, seek;
+  off_t seek;
+  n_uint64_t bytes;
   LimeRecordHeader *h;
   int status=EXIT_SUCCESS;
   char *bufstart;
