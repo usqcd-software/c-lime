@@ -240,7 +240,7 @@ int main(int argc, char *argv[])
 	    
 	  /* Announce file */
 	  printf("%2d %3d %8ld %s\n\t\t%s\n",
-		 msg, rec, bytes, curr.lime_type, curr.filename);
+		 msg, rec, (long int)bytes, curr.lime_type, curr.filename);
 
 	  /* Write header */
 	  status = write_hdr(bytes,curr.lime_type,MB_flag,ME_flag,dg);

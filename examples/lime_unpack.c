@@ -130,7 +130,7 @@ int main(int argc, char *argv[])
 
 
       /* Announce file */
-      printf("%8ld %s\n", nbytes, filename);
+      printf("%8ld %s\n", (long int)nbytes, filename);
       
       /* Open the payload file for writing */
       fp_dest = fopen(filename,"w");

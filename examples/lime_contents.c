@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
     printf("Record:         %d\n", rec);
     printf("Type:           %s\n", lime_type);
     printf("Data Length:    %llu\n", (unsigned long long)nbytes);
-    printf("Padding Length: %lu\n", bytes_pad);
+    printf("Padding Length: %lu\n", (unsigned long)bytes_pad);
     printf("MB flag:        %d\n", MB_flag);
     printf("ME flag:        %d\n", ME_flag);
     

@@ -9,6 +9,7 @@
 #include <lime_config.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <lime.h>
 #include <lime_fixed_types.h>
 /*#define MAXBUF 1048576*/
@@ -25,7 +26,6 @@ int main(int argc, char *argv[])
   FILE *fp;
   int status;
   n_uint64_t nbytes, bytes_left, bytes_to_copy, read_bytes;
-  int rec_seek,msg_seek;
   int rec, msg;
   char *lime_type;
   char *lime_type_target;
