@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
   limefile = argv[1];
   
   /* Open LIME file for reading */
-  fp = DCAPL(fopen)(limefile, "r");
+  fp = fopen(limefile, "r");
   if(fp == (FILE *)NULL) 
     {
       fprintf(stderr,"Unable to open file %s for reading\n", filename);
@@ -133,7 +133,7 @@ int main(int argc, char *argv[])
       printf("%8llu %s\n", (unsigned long long)nbytes, filename);
       
       /* Open the payload file for writing */
-      fp_dest = DCAPL(fopen)(filename,"w");
+      fp_dest = fopen(filename,"w");
       if(fp_dest == NULL){
 	fprintf(stderr,"Can't open %s for writing\n",filename);
 	return EXIT_FAILURE;
@@ -172,7 +172,7 @@ int main(int argc, char *argv[])
 	bytes_left -= bytes_to_copy;
       }      
       
-      DCAP(fclose)(fp_dest);
+      fclose(fp_dest);
     }
   
   limeDestroyReader(reader);
