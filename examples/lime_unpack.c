@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
   limefile = argv[1];
   
   /* Open LIME file for reading */
-  fp = fopen(limefile, "r");
+  fp = DCAPL(fopen)(limefile, "r");
   if(fp == (FILE *)NULL) 
     {
       fprintf(stderr,"Unable to open file %s for reading\n", filename);
@@ -130,10 +130,10 @@ int main(int argc, char *argv[])
 
 
       /* Announce file */
-      printf("%8ld %s\n", (long int)nbytes, filename);
+      printf("%8llu %s\n", (unsigned long long)nbytes, filename);
       
       /* Open the payload file for writing */
-      fp_dest = fopen(filename,"w");
+      fp_dest = DCAPL(fopen)(filename,"w");
       if(fp_dest == NULL){
 	fprintf(stderr,"Can't open %s for writing\n",filename);
 	return EXIT_FAILURE;
@@ -162,21 +162,21 @@ int main(int argc, char *argv[])
     
 	/* Write to the payload file */
 	wrote_bytes = fwrite(buf,1,bytes_to_copy,fp_dest);
-	if((n_uint64_t)wrote_bytes != nbytes){
+	if((n_uint64_t)wrote_bytes != bytes_to_copy){
 	  fprintf(stderr,"Error writing %s.  Wrote %llu bytes but wanted %llu\n",
 		  filename,(unsigned long long)wrote_bytes, 
-		  (unsigned long long)nbytes);
+		  (unsigned long long)bytes_to_copy);
 	  return EXIT_FAILURE;
 	}
 	
 	bytes_left -= bytes_to_copy;
       }      
       
-      fclose(fp_dest);
+      DCAP(fclose)(fp_dest);
     }
   
   limeDestroyReader(reader);
-  fclose(fp);
+  DCAP(fclose)(fp);
   
   
   return EXIT_SUCCESS;
