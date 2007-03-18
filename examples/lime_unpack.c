@@ -176,7 +176,7 @@ int main(int argc, char *argv[])
     }
   
   limeDestroyReader(reader);
-  DCAP(fclose)(fp);
+  fclose(fp);
   
   
   return EXIT_SUCCESS;
