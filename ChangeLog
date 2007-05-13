@@ -1,3 +1,16 @@
+2007-05-13 16:36  tag qio2-1-9
+
+2007-05-13 16:36  detar
+
+	* aclocal.m4, configure, configure.ac, examples/lime_contents.c,
+	  examples/lime_extract_record.c, examples/lime_extract_type.c,
+	  examples/lime_pack.c, examples/lime_unpack.c,
+	  examples/lime_writer_test1.c, include/Makefile.am,
+	  include/dcap-overload.h, include/lime.h,
+	  include/lime_config_internal.h.in, lib/lime_fseeko.c,
+	  lib/lime_reader.c, lib/lime_writer.c: Add support for dcache/DCAP
+	  from Jim Simone
+
 2007-03-18 18:08  tag adat1-31-0
 
 2007-03-18 18:08  tag qdp1-23-1
