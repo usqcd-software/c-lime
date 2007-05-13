@@ -47,6 +47,20 @@ AC_ARG_ENABLE(largefile,
   ]
 )
 
+# Set up dcap support
+dnl
+dnl --enable-dcap
+dnl
+AC_ARG_ENABLE(dcap,
+  AC_HELP_STRING(
+  [--enable-dcap],
+  [ For access to dcache.  Requires libdcap.a ]
+  ),
+  [ AC_MSG_NOTICE([Enabling dcap.])
+    AC_DEFINE([HAVE_DCAP],[],[Enable dcap])
+  ]
+)
+
 # Check for the fseeko function
 # Note that currently this just checks the existence of the function
 # rather than dealing with the whole issue of large file support.

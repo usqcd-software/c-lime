@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
 
   /* Open file */
 
-  fp = fopen(argv[1], "r");
+  fp = DCAPL(fopen)(argv[1], "r");
   if(fp == (FILE *)NULL) { 
     fprintf(stderr,"Unable to open file %s for reading\n", argv[1]);
     return EXIT_FAILURE;
@@ -112,7 +112,7 @@ int main(int argc, char *argv[])
   }
 
   limeDestroyReader(reader);
-  fclose(fp);
+  DCAP(fclose)(fp);
 
   return EXIT_SUCCESS;
 }   

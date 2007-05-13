@@ -3,6 +3,10 @@
 
 #ifndef HAVE_FSEEKO
 
+#ifdef HAVE_DCAP
+lime_misconfiguration_fseeko_not_declared;
+#endif
+
 #include "lime_fseeko.h"
 
 int fseeko(FILE *stream, off_t offset, int whence) {

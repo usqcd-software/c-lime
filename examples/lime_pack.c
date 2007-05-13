@@ -58,12 +58,12 @@ off_t file_size(FILE *fp)
   off_t oldpos = ftello(fp);
   off_t length;
   
-  if (fseeko(fp, 0L,SEEK_END) == -1)
+  if (DCAPL(fseeko)(fp, 0L,SEEK_END) == -1)
     return -1;
   
-  length = ftello(fp);
+  length = DCAPL(ftello)(fp);
   
-  return ( fseeko(fp,oldpos,SEEK_SET) == -1 ) ? -1 : length;
+  return ( DCAPL(fseeko)(fp,oldpos,SEEK_SET) == -1 ) ? -1 : length;
   
 }
 
@@ -152,7 +152,7 @@ int main(int argc, char *argv[])
     }
   
   /* Open the LIME file for writing */
-  fp_dest = fopen(limefile, "w");
+  fp_dest = DCAPL(fopen)(limefile, "w");
   if(fp_dest == (FILE *)NULL) 
     {
       fprintf(stderr, "Unable to open file %s for writing\n", limefile);
@@ -220,7 +220,7 @@ int main(int argc, char *argv[])
 	  rec++;
 	  
 	  /* Open file and get its length */
-	  fp_src = fopen(curr.filename,"r");
+	  fp_src = DCAPL(fopen)(curr.filename,"r");
 	  if(fp_src == (FILE *)NULL) 
 	    {
 	      fprintf(stderr, "Unable to open %s\n",curr.filename);
@@ -265,13 +265,13 @@ int main(int argc, char *argv[])
 	  /* The next record is not the begining of a message */
 	  MB_flag = 0;
 
-	  fclose(fp_src);
+	  DCAP(fclose)(fp_src);
 	}
     }
   
   
   limeDestroyWriter(dg);
-  fclose(fp_dest);
+  DCAP(fclose)(fp_dest);
   fclose(fp_list);
   return EXIT_SUCCESS;
 }

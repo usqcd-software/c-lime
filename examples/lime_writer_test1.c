@@ -112,7 +112,7 @@ int main(int argc, char *argv[])
 
   /* Open the file for the LimeWriter */
   fprintf(stderr, "Opening file %s\n", lime_file);
-  fp = fopen(lime_file, "w");
+  fp = DCAPL(fopen)(lime_file, "w");
   if(fp == (FILE *)NULL) { 
     fprintf(stderr, "Unable to open %s\n", lime_file);
     return EXIT_FAILURE;
@@ -135,7 +135,7 @@ int main(int argc, char *argv[])
   write_rec(writer,1,1,0,"Harry Nilsson, 1971", "lime-test-text3");
 
   limeDestroyWriter(writer);
-  fclose(fp);
+  DCAP(fclose)(fp);
 
   return EXIT_SUCCESS;
 }

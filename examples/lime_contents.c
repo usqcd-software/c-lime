@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
   }
   
 
-  fp = fopen(argv[1], "r");
+  fp = DCAPL(fopen)(argv[1], "r");
   if(fp == (FILE *)NULL) { 
     fprintf(stderr,"Unable to open file %s for reading\n", argv[1]);
     return EXIT_FAILURE;
@@ -85,7 +85,7 @@ int main(int argc, char *argv[])
     
     /* TO DO: Buffer the input */
     if(nbytes < MAX_BYTES){
-      data_buf = (char *)malloc(nbytes+1);
+      data_buf = (char *)malloc((size_t)nbytes+1);
       if( data_buf == (char *)NULL) { 
 	fprintf(stderr, "Couldn't malloc data buf\n");
 	return EXIT_FAILURE;
@@ -118,7 +118,7 @@ int main(int argc, char *argv[])
   }
 
   limeDestroyReader(reader);
-  fclose(fp);
+  DCAP(fclose)(fp);
 
   return EXIT_SUCCESS;
 

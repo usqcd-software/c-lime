@@ -46,7 +46,7 @@ int limeSetReaderPointer(LimeReader *r, off_t offset){
   int status;
 
   /* Position file as requested */
-  status = fseeko(r->fp, offset, SEEK_SET);  
+  status = DCAPL(fseeko)(r->fp, offset, SEEK_SET);  
   if(status < 0)return LIME_ERR_SEEK;
   r->first_read = 0;
   r->is_last = 0;
@@ -68,7 +68,7 @@ int limeSetReaderPointer(LimeReader *r, off_t offset){
 off_t limeGetReaderPointer(LimeReader *r){
   /* If we haven't read anything yet, we don't know anything. */
   if(r->first_read == 0)
-    return ftello(r->fp);
+    return DCAPL(ftello)(r->fp);
   else{
     return r->rec_start + r->bytes_total + r->bytes_pad;
   }
@@ -143,7 +143,7 @@ int limeReaderNextRecord(LimeReader *r)
   r->bytes_left = r->curr_header->data_length;
   r->bytes_total = r->curr_header->data_length;
   r->rec_ptr = 0;
-  r->rec_start = ftello(r->fp);
+  r->rec_start = DCAPL(ftello)(r->fp);
   r->bytes_pad = lime_padding(r->bytes_total);
 
   return status;
@@ -176,12 +176,16 @@ int limeReaderReadData(void *dest, n_uint64_t *nbytes, LimeReader *r)
     }
 
     /* Actually read */
-    bytes_read = fread(dest, sizeof(unsigned char), 
+    bytes_read = DCAP(fread)(dest, sizeof(unsigned char), 
 		       (size_t)bytes_to_read, r->fp);
     *nbytes = bytes_read;
     
-    if( bytes_read != bytes_to_read )
+    if( bytes_read != bytes_to_read ){
+      printf("limeReaderReadData tried to read %llu bytes but got %llu bytes\n",
+	     (unsigned long long)bytes_to_read,
+	     (unsigned long long)bytes_read);
       return LIME_ERR_READ;
+    }
 
     r->bytes_left -= bytes_read;
     r->rec_ptr += bytes_read;
@@ -254,7 +258,7 @@ int skipReaderBytes(LimeReader *r, off_t bytes_to_skip)
     return LIME_ERR_SEEK;
   }
 
-  status = fseeko(r->fp, (off_t)offset , SEEK_SET);
+  status = DCAPL(fseeko)(r->fp, (off_t)offset , SEEK_SET);
 
   if(status < 0){
     printf("fseek returned %d\n",status);fflush(stdout);
@@ -348,10 +352,10 @@ int readAndParseHeader(LimeReader *r)
 
   /* Read the entire header */
 
-  status = fread((void *)lime_header.int64, 
+  status = DCAP(fread)((void *)lime_header.int64, 
 		 sizeof(n_uint64_t), MAX_HDR64, r->fp);
   if( status != MAX_HDR64 ) {
-    if( feof( r->fp ) ) return LIME_EOF;
+    if( DCAP(feof)( r->fp ) ) return LIME_EOF;
     fprintf(stderr,"%s read %d but wanted %d\n",myname,status,MAX_HDR64);
     return LIME_ERR_READ;
   }
@@ -475,7 +479,8 @@ int limeReaderSetState(LimeReader *rdest, LimeReader *rsrc ){
   rdest->bytes_pad    = rsrc->bytes_pad    ;
 
   /* Now make the system state agree with the reader state */
-  status = fseeko(rdest->fp, rdest->rec_start + rdest->rec_ptr, SEEK_SET);
+  status = DCAPL(fseeko)(rdest->fp, rdest->rec_start + rdest->rec_ptr, 
+			 SEEK_SET);
   if(status < 0){
     printf("fseek returned %d\n",status);fflush(stdout);
     return LIME_ERR_SEEK;

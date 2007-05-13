@@ -130,7 +130,7 @@ int limeWriteRecordHeader( LimeRecordHeader *props, LimeWriter *d)
   d->bytes_left   = props->data_length;
   d->bytes_total  = props->data_length;
   d->rec_ptr      = 0;
-  d->rec_start    = ftello(d->fp);
+  d->rec_start    = DCAP(ftello)(d->fp);
   d->bytes_pad    = lime_padding(props->data_length);
   d->header_nextP = 0;
 
@@ -171,7 +171,7 @@ int limeWriteRecordData( void *source, n_uint64_t *nbytes, LimeWriter* d)
 	     (unsigned long long)bytes_to_write);
       return LIME_ERR_WRITE;
     }
-    ret_val = fwrite((const void *)source, sizeof(unsigned char), 
+    ret_val = DCAP(fwrite)((const void *)source, sizeof(unsigned char), 
 		     (size_t)bytes_to_write, d->fp);
     
     *nbytes = ret_val;
@@ -212,7 +212,7 @@ int limeWriterCloseRecord(LimeWriter *d)
   /* (If so, we have already closed the record) */
   if(d->header_nextP){
     /* Skip to the header position */
-    status = fseeko(d->fp, d->rec_start + d->bytes_total + d->bytes_pad,
+    status = DCAPL(fseeko)(d->fp, d->rec_start + d->bytes_total + d->bytes_pad,
 		    SEEK_SET);
     if(status < 0){
       printf("fseek returned %d\n",status);fflush(stdout);
@@ -229,7 +229,7 @@ int limeWriterCloseRecord(LimeWriter *d)
   /* Padding */
   pad = lime_padding(d->bytes_total);
   if( pad > 0 ) { 
-    ret_val = fwrite((const void *)padbuf, sizeof(unsigned char),
+    ret_val = DCAP(fwrite)((const void *)padbuf, sizeof(unsigned char),
 		     pad, d->fp);
     
     if( ret_val != pad )
@@ -249,7 +249,7 @@ int skip_lime_record_binary_header(FILE *fp)
 {
   int status;
 
-  status = fseeko(fp, (off_t)LIME_HDR_LENGTH, SEEK_CUR);
+  status = DCAPL(fseeko)(fp, (off_t)LIME_HDR_LENGTH, SEEK_CUR);
   if(status < 0){
     printf("fseek returned %d\n",status);fflush(stdout);
     return LIME_ERR_SEEK;
@@ -296,8 +296,8 @@ int write_lime_record_binary_header(FILE *fp, LimeRecordHeader *h)
   lime_hdr_rec_type[MAX_LIME_HDR_REC_TYPE] = '\0';
 
   /* Write the header */
-  ret_val =fwrite((const void *)lime_header.int64, 
-		  sizeof(n_uint64_t), MAX_HDR64, fp);
+  ret_val = DCAP(fwrite)((const void *)lime_header.int64, 
+			 sizeof(n_uint64_t), MAX_HDR64, fp);
 
   if( ret_val < MAX_HDR64 ) { 
     return LIME_ERR_WRITE;
@@ -346,7 +346,7 @@ int skipWriterBytes(LimeWriter *w, off_t bytes_to_skip)
 	   (unsigned long long)offset);
     return LIME_ERR_SEEK;
   }
-  status = fseeko(w->fp, (off_t)offset, SEEK_SET);
+  status = DCAPL(fseeko)(w->fp, (off_t)offset, SEEK_SET);
 
   if(status < 0){
     printf("fseek returned %d\n",status);fflush(stdout);
@@ -399,7 +399,8 @@ int limeWriterSetState(LimeWriter *wdest, LimeWriter *wsrc ){
   wdest->isLastP      = wsrc->isLastP      ;
 
   /* Now make the system state agree with the writer state */
-  status = fseeko(wdest->fp, wdest->rec_start + wdest->rec_ptr, SEEK_SET);
+  status = DCAPL(fseeko)(wdest->fp, wdest->rec_start + wdest->rec_ptr, 
+			 SEEK_SET);
   if(status < 0){
     printf("fseek returned %d\n",status);fflush(stdout);
     return LIME_ERR_SEEK;
