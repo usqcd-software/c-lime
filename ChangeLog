@@ -1,10 +1,15 @@
+2007-06-18 11:25  tag qio2-2-0
+
+2007-06-18 11:25  detar
+
+	* aclocal.m4, configure, include/lime_config_internal.h.in: Redo
+	  aclocal and automake to fix configure and Makefile.in
+
 2007-06-09 18:13  tag c-lime1-3-0
 
 2007-06-09 18:13  tag qdp1-24-0
 
 2007-06-09 18:13  tag qdp1-24-1
-
-2007-06-09 18:13  tag qio2-2-0
 
 2007-06-09 18:13  edwards
 
