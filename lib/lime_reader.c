@@ -106,7 +106,8 @@ int limeReaderNextRecord(LimeReader *r)
     /* We allow the caller to handle the error condition. */
     /* An EOF condition could be normal here. */
     if ( status < 0 ) { 
-      if( status != LIME_EOF )printf("%s returning %d\n",myname,status);
+      if( status != LIME_EOF )
+	printf("%s returning %d\n",myname,status);
       return status;
     }
     r->first_read = 1;
@@ -119,7 +120,8 @@ int limeReaderNextRecord(LimeReader *r)
        record */
     status = skipReaderBytes(r, r->bytes_total - r->rec_ptr);
     if ( status < 0 ) { 
-      if( status != LIME_EOF )printf("%s returns %d\n",myname,status);
+      if( status != LIME_EOF )
+	printf("%s returns %d\n",myname,status);
       return status;
     }
     
@@ -129,7 +131,8 @@ int limeReaderNextRecord(LimeReader *r)
        and try to read the next header */
     status = readAndParseHeader(r);
     if ( status < 0 ){
-      if( status != LIME_EOF )printf("%s returns %d\n",myname,status);
+      if( status != LIME_EOF )
+	printf("%s returns %d\n",myname,status);
       return status;
     }
   }
@@ -154,6 +157,7 @@ int limeReaderReadData(void *dest, n_uint64_t *nbytes, LimeReader *r)
 {
   n_uint64_t bytes_to_read;
   n_uint64_t bytes_read;
+  char myname[] = "limeReaderReadData";
 
   /* Check if we are at the end of the record */
   if( r->rec_ptr == r->bytes_total ) {
@@ -170,8 +174,8 @@ int limeReaderReadData(void *dest, n_uint64_t *nbytes, LimeReader *r)
     }
 
     if((size_t)bytes_to_read != bytes_to_read){
-      printf("limeReaderReadData Can't read %llu bytes\n",
-	     (unsigned long long)bytes_to_read);
+      printf("%s Can't read %llu bytes\n",
+	     myname,(unsigned long long)bytes_to_read);
       return LIME_ERR_READ;
     }
 
@@ -181,7 +185,8 @@ int limeReaderReadData(void *dest, n_uint64_t *nbytes, LimeReader *r)
     *nbytes = bytes_read;
     
     if( bytes_read != bytes_to_read ){
-      printf("limeReaderReadData tried to read %llu bytes but got %llu bytes\n",
+      printf("%s tried to read %llu bytes but got %llu bytes\n",
+	     myname,
 	     (unsigned long long)bytes_to_read,
 	     (unsigned long long)bytes_read);
       return LIME_ERR_READ;
@@ -199,12 +204,13 @@ int limeReaderCloseRecord(LimeReader *r)
 {
   int status;
   n_uint64_t offset;
+  char myname[] = "limeReaderCloseRecord";
 
   /* Advance to the beginning of the next record */
   offset = r->bytes_total - r->rec_ptr;
 
   if((off_t)offset != offset){
-    printf("limeReaderCloseRecord: can't skip %llu bytes\n",offset);
+    printf("%s: can't skip %llu bytes\n",myname,offset);
     return LIME_ERR_SEEK;
   }
 
@@ -221,17 +227,17 @@ int limeReaderCloseRecord(LimeReader *r)
 
 int skipReaderBytes(LimeReader *r, off_t bytes_to_skip)
 {
-
   int status;
   n_uint64_t new_rec_ptr;
   n_uint64_t offset;
+  char myname[] = "skipReaderBytes";
 
   new_rec_ptr = r->rec_ptr + bytes_to_skip;
 
   /* Prevent skip past the end of the data */
   if( new_rec_ptr > r->bytes_total ){
     new_rec_ptr = r->bytes_total;
-    printf("Seeking past end of data\n");fflush(stdout);
+    printf("%s: Seeking past end of data\n",myname);fflush(stdout);
     status = LIME_ERR_SEEK;
   }
 
@@ -239,7 +245,7 @@ int skipReaderBytes(LimeReader *r, off_t bytes_to_skip)
   /* In this case set the new pointer to the beginning of the record */
   if(new_rec_ptr < 0){
     new_rec_ptr = 0;
-    printf("Seeking before beginning end of data\n");fflush(stdout);
+    printf("%s: Seeking before beginning end of data\n",myname);fflush(stdout);
     status = LIME_ERR_SEEK;
   }
 
@@ -253,15 +259,15 @@ int skipReaderBytes(LimeReader *r, off_t bytes_to_skip)
 
   /* Guard against insufficient integer size */
   if((off_t)offset != offset){
-    printf("skipReaderBytes: fseeko can't seek to %llu. off_t too small.\n",
-	   (unsigned long long)offset);
+    printf("%s: fseeko can't seek to %llu. off_t too small.\n",
+	   myname,(unsigned long long)offset);
     return LIME_ERR_SEEK;
   }
 
   status = DCAPL(fseeko)(r->fp, (off_t)offset , SEEK_SET);
 
   if(status < 0){
-    printf("fseek returned %d\n",status);fflush(stdout);
+    printf("%s: fseek returned %d\n",myname,status);fflush(stdout);
     return LIME_ERR_SEEK;
   }
 
@@ -271,8 +277,10 @@ int skipReaderBytes(LimeReader *r, off_t bytes_to_skip)
   return LIME_SUCCESS;
 }
 
-int limeReaderSeek(LimeReader *r, off_t offset, int whence){
+int limeReaderSeek(LimeReader *r, off_t offset, int whence)
+{
   int status;
+  char myname[] = "limeReaderSeek";
 
   if(whence == SEEK_CUR){
     status = skipReaderBytes(r, offset);
@@ -281,7 +289,7 @@ int limeReaderSeek(LimeReader *r, off_t offset, int whence){
     status = skipReaderBytes(r, offset - r->rec_ptr);
   }
   else{
-    fprintf(stderr, "limeReaderSeek code %x not implemented yet\n",whence);  
+    fprintf(stderr, "%s code %x not implemented yet\n",myname,whence);  
     status = LIME_ERR_SEEK;
   }
   return status;
@@ -464,8 +472,10 @@ int readAndParseHeader(LimeReader *r)
    limeCreateReader and then call this procedure with rsrc, the
    broadcast master node's reader. */
 
-int limeReaderSetState(LimeReader *rdest, LimeReader *rsrc ){
+int limeReaderSetState(LimeReader *rdest, LimeReader *rsrc )
+{
   int status;
+  char myname[] = "limeReaderSetState";
 
   /* Set rdest reader state from rsrc */
   /* We do not copy the file pointer member fp or the curr_header member */
@@ -482,7 +492,7 @@ int limeReaderSetState(LimeReader *rdest, LimeReader *rsrc ){
   status = DCAPL(fseeko)(rdest->fp, rdest->rec_start + rdest->rec_ptr, 
 			 SEEK_SET);
   if(status < 0){
-    printf("fseek returned %d\n",status);fflush(stdout);
+    printf("%s: fseek returned %d\n",myname,status);fflush(stdout);
     return LIME_ERR_SEEK;
   }
   return LIME_SUCCESS;

@@ -46,6 +46,7 @@ int lime_big_endian()
 void lime_byte_swap(void *ptr, size_t size, size_t nmemb)
 {
   unsigned int j;
+  char myname[] = "lime_byte_swap";
                                                                                 
   char char_in[8];              /* characters used in byte swapping */
                                                                                 
@@ -128,8 +129,8 @@ void lime_byte_swap(void *ptr, size_t size, size_t nmemb)
   break;
                                                                                 
   default:
-    fprintf(stderr,"byte_swap: unsupported word size = %lu\n",
-	    (unsigned long)size);
+    fprintf(stderr,"%s: unsupported word size = %lu\n",
+	    myname,(unsigned long)size);
     exit(1);
   }
 }
