@@ -1,3 +1,5 @@
+2007-10-06 00:04  tag qdp1-25-1
+
 2007-10-06 00:04  kostas
 
 	* aclocal.m4: added a jack_fit util to make ensemble files of
