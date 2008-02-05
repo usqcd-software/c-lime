@@ -1,3 +1,11 @@
+2008-02-05 16:55  detar
+
+	* examples/lime_extract_record.c: Bug fix.
+
+2008-02-05 16:51  detar
+
+	* lib/lime_reader.c: Complain about premature EOF
+
 2007-10-27 17:19  tag adat1-35-0
 
 2007-10-27 17:19  tag adat1-36-0
