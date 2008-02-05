@@ -189,6 +189,8 @@ int limeReaderReadData(void *dest, n_uint64_t *nbytes, LimeReader *r)
 	     myname,
 	     (unsigned long long)bytes_to_read,
 	     (unsigned long long)bytes_read);
+      if(feof(r->fp))
+	printf("Unexpected EOF encountered\n");
       return LIME_ERR_READ;
     }
 
@@ -231,6 +233,7 @@ int skipReaderBytes(LimeReader *r, off_t bytes_to_skip)
   n_uint64_t new_rec_ptr;
   n_uint64_t offset;
   char myname[] = "skipReaderBytes";
+
 
   new_rec_ptr = r->rec_ptr + bytes_to_skip;
 
