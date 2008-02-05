@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
 {
   char buf[MAXBUF];
   LimeReader *reader;
-  FILE *fp;
+  FILE *fp,*fpout;
   int status;
   n_uint64_t nbytes, bytes_left, bytes_to_copy, read_bytes;
   int rec_seek,msg_seek;
@@ -34,8 +34,8 @@ int main(int argc, char *argv[])
   size_t bytes_pad;
   int MB_flag, ME_flag;
   
-  if( argc < 4 ) { 
-    fprintf(stderr, "Usage: %s <lime_file> <msgno> <recno>\n", argv[0]);
+  if( argc < 5 ) { 
+    fprintf(stderr, "Usage: %s <lime_file> <msgno> <recno> <output_file>\n", argv[0]);
     return EXIT_FAILURE;
   }
 
@@ -44,6 +44,12 @@ int main(int argc, char *argv[])
   fp = DCAPL(fopen)(argv[1], "r");
   if(fp == (FILE *)NULL) { 
     fprintf(stderr,"Unable to open file %s for reading\n", argv[1]);
+    return EXIT_FAILURE;
+  }
+
+  fpout = DCAPL(fopen)(argv[4], "w");
+  if(fpout == (FILE *)NULL) { 
+    fprintf(stderr,"Unable to open file %s for writing\n", argv[4]);
     return EXIT_FAILURE;
   }
 
@@ -93,7 +99,7 @@ int main(int argc, char *argv[])
 
     rec++;
 
-#if 0
+#if 1
     printf("\n\n");
     printf("Type:           %s\n",   lime_type);
     printf("Data Length:    %ld\n",  nbytes);
@@ -114,7 +120,7 @@ int main(int argc, char *argv[])
       status = limeReaderReadData((void *)buf, &read_bytes, reader);
     
       if( status < 0 && status != LIME_EOR ) { 
-	fprintf(stderr, "LIME read error occurred: status= %d", status);
+	fprintf(stderr, "LIME read error occurred: status= %d\n", status);
 	return EXIT_FAILURE;
       }
       if (read_bytes != bytes_to_copy) {
@@ -125,7 +131,7 @@ int main(int argc, char *argv[])
     
       /* Print to stdout */
       
-      fwrite(buf, bytes_to_copy, 1, stdout);
+      fwrite(buf, bytes_to_copy, 1, fpout);
       bytes_left -= bytes_to_copy;
     }
 
@@ -135,6 +141,7 @@ int main(int argc, char *argv[])
 
   limeDestroyReader(reader);
   DCAP(fclose)(fp);
+  DCAP(fclose)(fpout);
 
   return EXIT_SUCCESS;
 }   
