@@ -2,7 +2,7 @@
 /* Balint Joo 2003 */
 /* Usage ...
 
-      lime_extract_record <lime_file> <msgno> <recno>
+      lime_extract_record <lime_file> <msgno> <recno> <output_file>
 
    where msgno is the message number and recno is the record number
    (1-based enumeration)
@@ -99,7 +99,7 @@ int main(int argc, char *argv[])
 
     rec++;
 
-#if 1
+#if 0
     printf("\n\n");
     printf("Type:           %s\n",   lime_type);
     printf("Data Length:    %ld\n",  nbytes);
