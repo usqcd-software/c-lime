@@ -38,6 +38,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include "lime_fseeko.h"
 
 #define MAXLINE 512
 #define MAXFILENAME MAXLINE
