@@ -140,7 +140,6 @@ sharedstatedir = @sharedstatedir@
 srcdir = @srcdir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
-top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 include_HEADERS = lime.h lime_binary_header.h lime_defs.h lime_fixed_types.h lime_header.h lime_reader.h lime_utils.h lime_writer.h lime_fseeko.h lime_config.h dcap-overload.h
