@@ -1,3 +1,8 @@
+2009-03-04 00:56  osborn
+
+	* aclocal.m4, configure: Made it so that the "clear to send"
+	  messages are still sent when HAVE_BGL is defined.
+
 2008-11-06 13:18  tag adat1-44-0
 
 2008-11-06 13:18  tag adat2-0-0
