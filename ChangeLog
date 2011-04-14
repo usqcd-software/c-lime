@@ -1,3 +1,8 @@
+2011-04-14 14:38  osborn
+
+	* aclocal.m4, configure, include/lime_config_internal.h.in: made
+	  SINGLEFILE PARALLEL mode use only specified io nodes
+
 2009-04-20 10:57  tag adat2-12-4
 
 2009-04-20 10:57  tag adat2-13-0
