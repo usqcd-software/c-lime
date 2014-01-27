@@ -29,8 +29,8 @@ int main(int argc, char *argv[])
   int rec, msg;
   char *lime_type;
   char *lime_type_target;
-  size_t bytes_pad;
-  int MB_flag, ME_flag;
+  //size_t bytes_pad;
+  int MB_flag/*, ME_flag*/;
   
   if( argc < 3 ) { 
     fprintf(stderr, "Usage: %s <lime_file> <lime_type>\n", argv[0]);
@@ -69,9 +69,9 @@ int main(int argc, char *argv[])
 
     nbytes    = limeReaderBytes(reader);
     lime_type = limeReaderType(reader);
-    bytes_pad = limeReaderPadBytes(reader);
+    //bytes_pad = limeReaderPadBytes(reader);
     MB_flag   = limeReaderMBFlag(reader);
-    ME_flag   = limeReaderMEFlag(reader);
+    //ME_flag   = limeReaderMEFlag(reader);
 
     /* Update message and record numbers */
     if(MB_flag == 1){

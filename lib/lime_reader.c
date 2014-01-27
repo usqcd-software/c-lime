@@ -212,7 +212,7 @@ int limeReaderCloseRecord(LimeReader *r)
   offset = r->bytes_total - r->rec_ptr;
 
   if((off_t)offset != offset){
-    printf("%s: can't skip %llu bytes\n",myname,offset);
+    printf("%s: can't skip %llu bytes\n",myname,(long long unsigned)offset);
     return LIME_ERR_SEEK;
   }
 
@@ -351,12 +351,12 @@ int readAndParseHeader(LimeReader *r)
   n_uint64_t  i_data_length;
   unsigned char *typebuf;
   int status;
-  int msg_begin = 1;
+  //int msg_begin = 1;
   char myname[] = "lime::readAndParseHeader";
 
   /* Destroy any old header structure kicking about */
   if( r->curr_header != (LimeRecordHeader *)NULL ) { 
-    msg_begin = r->is_last;   /* Remember whether we finished a message */
+    //msg_begin = r->is_last;   /* Remember whether we finished a message */
     limeDestroyHeader(r->curr_header);
     r->curr_header = (LimeRecordHeader *)NULL;
   }

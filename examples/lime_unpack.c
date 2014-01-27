@@ -40,8 +40,8 @@ int main(int argc, char *argv[])
   LimeReader *reader;
   n_uint64_t nbytes, bytes_left, bytes_to_copy, read_bytes;
   size_t wrote_bytes;
-  size_t bytes_pad;
-  int MB_flag, ME_flag;
+  //size_t bytes_pad;
+  int MB_flag/*, ME_flag*/;
   
   if( argc < 2 )
     {
@@ -105,9 +105,9 @@ int main(int argc, char *argv[])
       
       nbytes    = limeReaderBytes(reader);
       lime_type = limeReaderType(reader);
-      bytes_pad = limeReaderPadBytes(reader);
+      //bytes_pad = limeReaderPadBytes(reader);
       MB_flag   = limeReaderMBFlag(reader);
-      ME_flag   = limeReaderMEFlag(reader);
+      //ME_flag   = limeReaderMEFlag(reader);
       
       if (MB_flag == 1)
 	{

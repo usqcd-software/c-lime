@@ -30,9 +30,9 @@ int main(int argc, char *argv[])
   n_uint64_t nbytes, bytes_left, bytes_to_copy, read_bytes;
   int rec_seek,msg_seek;
   int rec, msg;
-  char *lime_type;
-  size_t bytes_pad;
-  int MB_flag, ME_flag;
+  //char *lime_type;
+  //size_t bytes_pad;
+  int MB_flag/*, ME_flag*/;
   
   if( argc < 5 ) { 
     fprintf(stderr, "Usage: %s <lime_file> <msgno> <recno> <output_file>\n", argv[0]);
@@ -86,10 +86,10 @@ int main(int argc, char *argv[])
     }
 
     nbytes    = limeReaderBytes(reader);
-    lime_type = limeReaderType(reader);
-    bytes_pad = limeReaderPadBytes(reader);
+    //lime_type = limeReaderType(reader);
+    //bytes_pad = limeReaderPadBytes(reader);
     MB_flag   = limeReaderMBFlag(reader);
-    ME_flag   = limeReaderMEFlag(reader);
+    //ME_flag   = limeReaderMEFlag(reader);
 
     /* Update message and record numbers */
     if(MB_flag == 1){
@@ -101,11 +101,11 @@ int main(int argc, char *argv[])
 
 #if 0
     printf("\n\n");
-    printf("Type:           %s\n",   lime_type);
+    //printf("Type:           %s\n",   lime_type);
     printf("Data Length:    %ld\n",  nbytes);
-    printf("Padding Length: %d\n",   bytes_pad);
+    //printf("Padding Length: %d\n",   bytes_pad);
     printf("MB flag:        %d\n",   MB_flag);
-    printf("ME flag:        %d\n",   ME_flag);
+    //printf("ME flag:        %d\n",   ME_flag);
 #endif
 
 

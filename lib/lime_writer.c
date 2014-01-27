@@ -21,9 +21,9 @@ int skipWriterBytes(LimeWriter *w, off_t bytes_to_skip);
 LimeWriter* limeCreateWriter(FILE *fp)
 {
   LimeWriter* ret_val;
-  char myname[] = "limeCreateWriter";
 
 #ifdef LIME_DEBUG
+  char myname[] = "limeCreateWriter";
   fprintf(stderr, "%s: Initialising LIME Generator\n",myname);
 #endif
   ret_val = (LimeWriter *)malloc(sizeof(LimeWriter));
@@ -46,9 +46,8 @@ LimeWriter* limeCreateWriter(FILE *fp)
 
 int limeDestroyWriter(LimeWriter *s)
 {
-  char myname[] = "limeDestroyWriter";
-
 #ifdef LIME_DEBUG
+  char myname[] = "limeDestroyWriter";
   fprintf(stderr, "%s: Closing Lime Generator\n",myname);
 #endif
 
@@ -87,9 +86,9 @@ int limeDestroyWriter(LimeWriter *s)
 int limeWriteRecordHeader( LimeRecordHeader *props, LimeWriter *d)
 {
   int ret_val;
-  char myname[] = "limeWriteRecordHeader";
 
 #ifdef LIME_DEBUG 
+  char myname[] = "limeWriteRecordHeader";
   fprintf(stderr, "%s: In limeWriteRecordHeader\n",myname);
   fflush(stderr);
 #endif
@@ -267,9 +266,9 @@ int write_lime_record_binary_header(FILE *fp, LimeRecordHeader *h)
 {
   int i;
   int ret_val;
-  char myname[] = "write_lime_record_binary_header";
 
 #ifdef LIME_DEBUG
+  char myname[] = "write_lime_record_binary_header";
   fprintf(stderr, "%s: In write_lime_record_binary_header\n",myname);
 #endif
 
