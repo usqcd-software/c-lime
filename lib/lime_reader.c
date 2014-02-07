@@ -9,7 +9,7 @@
 /* If we don't have fseeko, define it */
 #include <lime_fseeko.h>
 
-#undef LIME_DEBUG
+//#undef LIME_DEBUG
 
 /* Forward declarations for internal routines */
 int skipReaderBytes(LimeReader *r, off_t bytes_to_skip);
