@@ -300,14 +300,14 @@ int write_lime_record_binary_header(FILE *fp, LimeRecordHeader *h)
 
   
 #ifdef JCO_DEBUG
-  fprintf(stderr, "%s: initial position %llu\n", myname,
+  fprintf(stderr, "%s: initial position %llu\n", __func__,
 	  (unsigned long long)DCAP(ftello(fp)));
 #endif
   /* Write the header */
   ret_val = DCAP(fwrite)((const void *)lime_header.int64, 
 			 sizeof(n_uint64_t), MAX_HDR64, fp);
 #ifdef JCO_DEBUG
-  fprintf(stderr, "%s: final position %llu\n", myname,
+  fprintf(stderr, "%s: final position %llu\n", __func__,
 	  (unsigned long long)DCAP(ftello(fp)));
 #endif
 
