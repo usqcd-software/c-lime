@@ -32,7 +32,7 @@ int lime_padding(size_t nbytes)
   return ret_val;
 }
 
-int lime_big_endian()
+int lime_big_endian(void)
 {
   union {
     int  l;

@@ -299,14 +299,14 @@ int write_lime_record_binary_header(FILE *fp, LimeRecordHeader *h)
   lime_hdr_rec_type[MAX_LIME_HDR_REC_TYPE] = '\0';
 
   
-#ifdef LIME_DEBUG
+#ifdef JCO_DEBUG
   fprintf(stderr, "%s: initial position %llu\n", myname,
 	  (unsigned long long)DCAP(ftello(fp)));
 #endif
   /* Write the header */
   ret_val = DCAP(fwrite)((const void *)lime_header.int64, 
 			 sizeof(n_uint64_t), MAX_HDR64, fp);
-#ifdef LIME_DEBUG
+#ifdef JCO_DEBUG
   fprintf(stderr, "%s: final position %llu\n", myname,
 	  (unsigned long long)DCAP(ftello(fp)));
 #endif
