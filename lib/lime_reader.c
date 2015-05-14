@@ -51,6 +51,7 @@ int limeSetReaderPointer(LimeReader *r, off_t offset){
   r->first_read = 0;
   r->is_last = 0;
   r->header_nextP = 1;
+  limeDestroyHeader(r->curr_header);
   r->curr_header = (LimeRecordHeader *)NULL;
   r->bytes_left = 0;     /* Obsolete value */
   r->bytes_total = 0;
