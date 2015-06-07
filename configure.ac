@@ -5,7 +5,7 @@ AC_CONFIG_AUX_DIR(config)
 AC_CONFIG_SRCDIR([include/lime_header.h])
 AC_CONFIG_HEADER([include/lime_config_internal.h])
 
-AM_INIT_AUTOMAKE
+AM_INIT_AUTOMAKE([subdir-objects])
 
 # Checks for programs.
 AC_PROG_CC
