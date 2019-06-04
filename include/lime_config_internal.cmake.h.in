@@ -2,64 +2,64 @@
 #cmakedefine HAVE_DCAP
 
 /* Define to 1 if fseeko (and presumably ftello) exists and is declared. */
-#define HAVE_FSEEKO @HAVE_FSEEKO@
+#cmakedefine HAVE_FSEEKO @HAVE_FSEEKO@
 
 /* Define to 1 if you have the <inttypes.h> header file. */
-#define HAVE_INTTYPES_H @HAVE_INTTYPES_H@
+#cmakedefine HAVE_INTTYPES_H @HAVE_INTTYPES_H@
 
 /* Define to 1 if you have the <memory.h> header file. */
-#define HAVE_MEMORY_H @HAVE_MEMORY_H@
+#cmakedefine HAVE_MEMORY_H @HAVE_MEMORY_H@
 
 /* Define to 1 if you have the <stdint.h> header file. */
-#define HAVE_STDINT_H @HAVE_STDINT_H@
+#cmakedefine HAVE_STDINT_H @HAVE_STDINT_H@
 
 /* Define to 1 if you have the <stdlib.h> header file. */
-#define HAVE_STDLIB_H @HAVE_STDLIB_H@
+#cmakedefine HAVE_STDLIB_H @HAVE_STDLIB_H@
 
 /* Define to 1 if you have the <strings.h> header file. */
-#define HAVE_STRINGS_H @HAVE_STRINGS_H@
+#cmakedefine HAVE_STRINGS_H @HAVE_STRINGS_H@
 
 /* Define to 1 if you have the <string.h> header file. */
-#define HAVE_STRING_H  @HAVE_STRING_H@
+#cmakedefine HAVE_STRING_H  @HAVE_STRING_H@
 
 /* Define to 1 if you have the <sys/stat.h> header file. */
-#define HAVE_SYS_STAT_H @HAVE_SYS_STAT_H@
+#cmakedefine HAVE_SYS_STAT_H @HAVE_SYS_STAT_H@
 
 /* Define to 1 if you have the <sys/types.h> header file. */
-#define HAVE_SYS_TYPES_H @HAVE_SYS_TYPES_H@
+#cmakedefine HAVE_SYS_TYPES_H @HAVE_SYS_TYPES_H@
 
 /* Define to 1 if the system has the type `uint16_t'. */
-#define HAVE_UINT16_T   @HAVE_UINT16_T@
+#cmakedefine HAVE_UINT16_T   @HAVE_UINT16_T@
 
 /* Define to 1 if the system has the type `uint32_t'. */
-#define HAVE_UINT32_T   @HAVE_UINT32_T@
+#cmakedefine HAVE_UINT32_T   @HAVE_UINT32_T@
 
 /* Define to 1 if the system has the type `uint64_t'. */
-#define HAVE_UINT64_T   @HAVE_UINT64_T@
+#cmakedefine HAVE_UINT64_T   @HAVE_UINT64_T@
 
 /* Define to 1 if you have the <unistd.h> header file. */
-#define HAVE_UNISTD_H  @HAVE_UNISTD_H@
+#cmakedefine HAVE_UNISTD_H  @HAVE_UNISTD_H@
 
 /* The size of `unsigned char', as computed by sizeof. */
-#define SIZEOF_UNSIGNED_CHAR @SIZEOF_UNSIGNED_CHAR@
+#cmakedefine SIZEOF_UNSIGNED_CHAR @SIZEOF_UNSIGNED_CHAR@
 
 /* The size of `unsigned int', as computed by sizeof. */
-#define SIZEOF_UNSIGNED_INT @SIZEOF_UNSIGNED_INT@
+#cmakedefine SIZEOF_UNSIGNED_INT @SIZEOF_UNSIGNED_INT@
 
 /* The size of `unsigned long', as computed by sizeof. */
-#define SIZEOF_UNSIGNED_LONG @SIZEOF_UNSIGNED_LONG@
+#cmakedefine SIZEOF_UNSIGNED_LONG @SIZEOF_UNSIGNED_LONG@
 
 /* The size of `unsigned long long', as computed by sizeof. */
-#define SIZEOF_UNSIGNED_LONG_LONG @SIZEOF_UNSIGNED_LONG_LONG@
+#cmakedefine SIZEOF_UNSIGNED_LONG_LONG @SIZEOF_UNSIGNED_LONG_LONG@
 
 /* The size of `unsigned short', as computed by sizeof. */
-#define SIZEOF_UNSIGNED_SHORT @SIZEOF_UNSIGNED_SHORT@
+#cmakedefine SIZEOF_UNSIGNED_SHORT @SIZEOF_UNSIGNED_SHORT@
 
 /* Stupid backward compatibility with autoconf */
 
 /* Version number of package */
-#define PACKAGE "@CMAKE_PROJECT_NAME@"
-#define VERSION "@CMAKE_PROJECT_VERSION@"
+#define PACKAGE "@PROJECT_NAME@"
+#define VERSION "@PROJECT_VERSION@"
 
 #define PACKAGE_BUGREPORT "detar@physics.utah.edu"
 #define PACKAGE_NAME  "@PROJECT_NAME@"
