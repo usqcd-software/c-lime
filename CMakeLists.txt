@@ -56,4 +56,32 @@ add_subdirectory(examples)
 # FIXME do PM generation
 # add_subdirecotry(doc)
 
-install(DIRECTORY include DESTINATION ${CMAKE_INSTALL_PREFIX})
+#install the targets and add into the Export LimeTargets 
+install(TARGETS lime EXPORT C-LimeTargets
+  ARCHIVE DESTINATION lib
+  LIBRARY  DESTINATION lib
+  RUNTIME DESTINATION bin
+  INCLUDES DESTINATION include)
+ 
+#instal the include directory 
+install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+
+#install the export description of the targets
+install(EXPORT C-LimeTargets DESTINATION lib/cmake/C-Lime)
+
+#write a Version file
+include(CMakePackageConfigHelpers)
+write_basic_package_version_file(
+    C-LimeVersion.cmake
+    VERSION ${PACKAGE_VERSION}
+    COMPATIBILITY AnyNewerVersion
+    )
+
+
+# Using this macro we can pass some path vars down...
+# But we are not doing this for now.
+configure_package_config_file(C-LimeConfig.cmake.in C-LimeConfig.cmake INSTALL_DESTINATION lib/cmake/C-Lime)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/C-LimeVersion.cmake ${CMAKE_CURRENT_BINARY_DIR}/C-LimeConfig.cmake 
+        DESTINATION lib/cmake/C-Lime)
+
+export(TARGETS lime FILE C-LimeTargets.cmake)

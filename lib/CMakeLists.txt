@@ -19,10 +19,5 @@ target_include_directories(lime PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/../include>
   $<INSTALL_INTERFACE:include>)
   
-install(TARGETS lime EXPORT LIMEConfig
-  ARCHIVE DESTINATION lib
-  LIBRARY  DESTINATION lib
-  RUNTIME DESTINATION lib)
   
-install(EXPORT LIMEConfig DESTINATION cmake)
-export(TARGETS lime FILE LIMEConfig.cmake )
+

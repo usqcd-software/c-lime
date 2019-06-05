@@ -1,0 +1,4 @@
+@PACKAGE_INIT@
+
+# Include the generated exported targets
+include(${CMAKE_CURRENT_LIST_DIR}/C-LimeTargets.cmake)
