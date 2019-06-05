@@ -84,5 +84,4 @@ configure_package_config_file(C-LimeConfig.cmake.in C-LimeConfig.cmake INSTALL_D
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/C-LimeVersion.cmake ${CMAKE_CURRENT_BINARY_DIR}/C-LimeConfig.cmake 
         DESTINATION lib/cmake/C-Lime)
 
-#export(TARGETS lime FILE C-LimeTargets.cmake)
-export(PACKAGE C-Lime)
+export(TARGETS lime FILE C-LimeTargets.cmake)
