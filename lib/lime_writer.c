@@ -4,6 +4,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <string.h>
+#include <fcntl.h>
 
 #include "lime_binary_header.h"
 #include "lime_utils.h"
@@ -139,6 +140,34 @@ int limeWriteRecordHeader( LimeRecordHeader *props, LimeWriter *d)
  
 }
 
+void lock(int fd, off_t start, off_t len)
+{
+  struct flock fl;
+  memset(&fl, 0, sizeof(fl));
+  fl.l_type = F_WRLCK;
+  fl.l_whence = SEEK_SET;
+  fl.l_start = start;
+  fl.l_len = len;
+  fl.l_pid = 0;
+  if (fcntl(fd, F_SETLK, &fl) == -1) {
+    printf("warning: lock of %ld bytes failed\n", len);
+  }
+}
+
+void unlock(int fd, off_t start, off_t len)
+{
+  struct flock fl;
+  memset(&fl, 0, sizeof(fl));
+  fl.l_type = F_UNLCK;
+  fl.l_whence = SEEK_SET;
+  fl.l_start = start;
+  fl.l_len = len;
+  fl.l_pid = 0;
+  if (fcntl(fd, F_SETLK, &fl) == -1) {
+    printf("warning: unlock of %ld bytes failed\n", len);
+  }
+}
+
 /* Write data. */
 int limeWriteRecordData( void *source, n_uint64_t *nbytes, LimeWriter* d)
 {
@@ -173,9 +202,12 @@ int limeWriteRecordData( void *source, n_uint64_t *nbytes, LimeWriter* d)
 	     myname,(unsigned long long)bytes_to_write);
       return LIME_ERR_WRITE;
     }
+    int fd = fileno(d->fp);
+    long pos = ftell(d->fp);
+    lock(fd, pos, bytes_to_write);
     ret_val = DCAP(fwrite)((const void *)source, sizeof(unsigned char), 
 		     (size_t)bytes_to_write, d->fp);
-    
+    unlock(fd, pos, bytes_to_write);
     *nbytes = ret_val;
     
     if( ret_val != bytes_to_write )
