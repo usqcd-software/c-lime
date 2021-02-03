@@ -7,12 +7,14 @@
 
 /**< Header length in 64-bit words */
 #define MAX_HDR64 18
+/**< Padded by 1 for adding null for later convenience */
+#define MAX_HDR64_PAD (MAX_HDR64+1)
 
 static union { 
-  n_uint64_t int64[MAX_HDR64];
-  n_uint32_t int32[2*MAX_HDR64];
-  n_uint16_t int16[4*MAX_HDR64];
-  unsigned char uchr[8*MAX_HDR64];
+  n_uint64_t int64[MAX_HDR64_PAD];
+  n_uint32_t int32[2*MAX_HDR64_PAD];
+  n_uint16_t int16[4*MAX_HDR64_PAD];
+  unsigned char uchr[8*MAX_HDR64_PAD];
 } lime_header;
 
 /* Total LIME header length in bytes */

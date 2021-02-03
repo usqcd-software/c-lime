@@ -358,8 +358,8 @@ int write_lime_record_binary_header(FILE *fp, LimeRecordHeader *h)
 int skipWriterBytes(LimeWriter *w, off_t bytes_to_skip)
 {
   int status;
-  n_uint64_t new_rec_ptr;  /* The new record pointer */
-  n_uint64_t offset;
+  int64_t new_rec_ptr;  /* The new record pointer */
+  int64_t offset;
   char myname[] = "skipWriterBytes";
 
   /* Ignore zero. */

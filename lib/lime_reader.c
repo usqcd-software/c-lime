@@ -231,8 +231,8 @@ int limeReaderCloseRecord(LimeReader *r)
 int skipReaderBytes(LimeReader *r, off_t bytes_to_skip)
 {
   int status;
-  n_uint64_t new_rec_ptr;
-  n_uint64_t offset;
+  int64_t new_rec_ptr;
+  int64_t offset;
   char myname[] = "skipReaderBytes";
 
 
