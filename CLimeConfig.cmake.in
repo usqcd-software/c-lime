@@ -2,3 +2,4 @@
 
 # Include the generated exported targets
 include(${CMAKE_CURRENT_LIST_DIR}/CLimeTargets.cmake)
+check_required_components(CLime)

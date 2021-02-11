@@ -75,4 +75,3 @@ configure_package_config_file(CLimeConfig.cmake.in CLimeConfig.cmake INSTALL_DES
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/CLimeVersion.cmake ${CMAKE_CURRENT_BINARY_DIR}/CLimeConfig.cmake 
         DESTINATION lib/cmake/CLime)
 
-export(TARGETS lime FILE CLimeTargets.cmake)
