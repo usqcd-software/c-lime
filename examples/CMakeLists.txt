@@ -6,7 +6,7 @@ foreach(prog lime_contents
              lime_writer_test1)
 
 add_executable(${prog} "${prog}.c"  )
-target_link_libraries(${prog} lime m)
+target_link_libraries(${prog} CLime::lime m)
 set_target_properties(${prog} PROPERTIES C_STANDARD 99)
 set_target_properties(${prog} PROPERTIES C_EXTENSIONS OFF)
 
