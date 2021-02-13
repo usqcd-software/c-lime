@@ -296,7 +296,7 @@ int write_lime_record_binary_header(FILE *fp, LimeRecordHeader *h)
   strncpy((char*)lime_hdr_rec_type,h->type,MAX_LIME_HDR_REC_TYPE);
 
   /* Force a null termination */
-  lime_hdr_rec_type[MAX_LIME_HDR_REC_TYPE] = '\0';
+  lime_hdr_rec_type[MAX_LIME_HDR_REC_TYPE-1] = '\0';
 
   
 #ifdef JCO_DEBUG
