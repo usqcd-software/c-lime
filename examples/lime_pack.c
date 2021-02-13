@@ -54,10 +54,10 @@ typedef struct {
 
 
 /* Discover how many bytes there are in the file */
-off_t file_size(FILE *fp)
+n_uint64_t file_size(FILE *fp)
 {
-  off_t oldpos = ftello(fp);
-  off_t length;
+  n_uint64_t oldpos = ftello(fp);
+  n_uint64_t length;
   
   if (DCAPL(fseeko)(fp, 0L,SEEK_END) == -1)
     return -1;
@@ -117,7 +117,7 @@ int write_buf(char *buf, n_uint64_t bytes, LimeWriter *dg)
   return EXIT_SUCCESS;
 }
 
-int min(int i, int j){
+n_uint64_t mino(n_uint64_t i, n_uint64_t j){
   return i < j ? i : j;
 }
 
@@ -249,8 +249,8 @@ int main(int argc, char *argv[])
 
 	  /* Buffered copy */
 	  bytes_left = bytes;
-	  while(bytes_left > 0){
-	    bytes_to_copy = min(MAXBUF,bytes_left);
+	  while(bytes_left > (n_uint64_t)0){
+	    bytes_to_copy = mino((n_uint64_t)MAXBUF,bytes_left);
 	    if( bytes_to_copy != fread(buf,1,bytes_to_copy,fp_src))
 	      {
 		fprintf(stderr, "Error reading %s\n", curr.filename);
