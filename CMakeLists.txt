@@ -56,7 +56,7 @@ add_subdirectory(examples)
 
 
 #instal the include directory 
-install(DIRECTORY include DESTINATION ${CMAKE_INSTALL_PREFIX})
+install(DIRECTORY include DESTINATION . )
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/include/lime_config_internal.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
 
