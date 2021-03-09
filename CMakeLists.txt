@@ -21,6 +21,8 @@ if( LIME_DCAP )
   endif()
 endif()
 
+option(LIME_ENABLE_SANITIZERS "Enable Address and Undefined Behaviour Sanitizers" OFF)
+
 
 check_symbol_exists("fseeko" "stdio.h" HAVE_FSEEKO)
 check_include_file("stdint.h" HAVE_STDINT_H)
@@ -47,6 +49,16 @@ check_type_size("unsigned short" SIZEOF_UNSIGNED_SHORT)
 
 configure_file(include/lime_config_internal.cmake.h.in include/lime_config_internal.h)
 
+# Deal with Sanitizer
+if( LIME_ENABLE_SANITIZERS )
+  if( ( CMAKE_C_COMPILER_ID MATCHES "Clang" AND CMAKE_C_COMPILER_VERSION VERSION_GREATER_EQUAL 3.1)
+     OR ( CMAKE_C_COMPILER_ID MATCHES "Clang" AND CMAKE_C_COMPILER_VERSION VERSION_GREATER_EQUAL 4.8) )
+      message(STATUS "Setting Sanitizer options")
+      set(LIME_SANITIZER_OPTS "-fsanitize=address,undefined")
+  else()
+    message(STATUS "Don't know how to enable sanitizers for ${CMAKE_C_COMPILER}... Ignoring")
+  endif()
+endif()  
 
 add_subdirectory(lib)
 add_subdirectory(examples)

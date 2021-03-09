@@ -19,6 +19,11 @@ target_include_directories(lime PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/../include>
   $<INSTALL_INTERFACE:include>)
 
+if( LIME_SANITIZER_OPTS )
+  target_compile_options(lime PUBLIC ${LIME_SANITIZER_OPTS} )
+  target_link_options(lime PUBLIC ${LIME_SANITIZER_OPTS} )
+endif()
+
 install(TARGETS lime 
 	EXPORT CLimeTargets
   	ARCHIVE DESTINATION lib
