@@ -53,7 +53,7 @@ configure_file(include/lime_config_internal.cmake.h.in include/lime_config_inter
 if( LIME_ENABLE_SANITIZERS )
   if( ( CMAKE_C_COMPILER_ID MATCHES "Clang" AND CMAKE_C_COMPILER_VERSION VERSION_GREATER_EQUAL 3.1)
      OR ( CMAKE_C_COMPILER_ID MATCHES "Clang" AND CMAKE_C_COMPILER_VERSION VERSION_GREATER_EQUAL 4.8) )
-      message(STATUS "Setting Sanitizer options")
+      message(STATUS "C-Lime: Setting Sanitizer options")
       set(LIME_SANITIZER_OPTS "-fsanitize=address,undefined")
   else()
     message(STATUS "Don't know how to enable sanitizers for ${CMAKE_C_COMPILER}... Ignoring")
