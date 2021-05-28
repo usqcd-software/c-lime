@@ -54,18 +54,16 @@ typedef struct {
 
 
 /* Discover how many bytes there are in the file */
-n_uint64_t file_size(FILE *fp)
+int  file_size(FILE *fp, n_uint64_t* length)
 {
   n_uint64_t oldpos = ftello(fp);
-  n_uint64_t length;
   
   if (DCAPL(fseeko)(fp, 0L,SEEK_END) == -1)
     return -1;
   
-  length = DCAPL(ftello)(fp);
+  *length = DCAPL(ftello)(fp);
   
-  return ( DCAPL(fseeko)(fp,oldpos,SEEK_SET) == -1 ) ? -1 : length;
-  
+  return DCAPL(fseeko)(fp,oldpos,SEEK_SET);
 }
 
 void read_list_line(List_Line *list, FILE *fp_list)
@@ -227,11 +225,11 @@ int main(int argc, char *argv[])
 	      fprintf(stderr, "Unable to open %s\n",curr.filename);
 	      break;
 	    }
-	  else
-	    if ((bytes = file_size(fp_src)) == -1)
+	  else {
+	    if ( file_size(fp_src,&bytes) == -1)
 	      fprintf(stderr,"Can't compute length of file %s\n", 
 		      curr.filename);
-
+          }
 	  /* Reset stream pointer to beginning of file */
 	  fseeko(fp_src,0L,SEEK_SET);
 	  
@@ -240,8 +238,8 @@ int main(int argc, char *argv[])
 	  if ( next.ss_count <= 0 || next.eof ) ME_flag = 1;
 	    
 	  /* Announce file */
-	  printf("%2d %3d %8ld %s\n\t\t%s\n",
-		 msg, rec, (long int)bytes, curr.lime_type, curr.filename);
+	  printf("%2d %3d %8lu %s\n\t\t%s\n",
+		 msg, rec, bytes, curr.lime_type, curr.filename);
 
 	  /* Write header */
 	  status = write_hdr(bytes,curr.lime_type,MB_flag,ME_flag,dg);

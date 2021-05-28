@@ -326,49 +326,65 @@ int write_lime_record_binary_header(FILE *fp, LimeRecordHeader *h)
 int skipWriterBytes(LimeWriter *w, off_t bytes_to_skip)
 {
   int status;
-  int64_t new_rec_ptr;  /* The new record pointer */
-  int64_t offset;
+  int seek_status;
+  n_uint64_t new_rec_ptr;  /* The new record pointer */
+  n_uint64_t offset;
   char myname[] = "skipWriterBytes";
 
   /* Ignore zero. */
   if(bytes_to_skip == 0)return LIME_SUCCESS;
 
-  new_rec_ptr = w->rec_ptr + bytes_to_skip;
+  status = LIME_SUCCESS;
 
-  /* Prevent skip past the end of the data */
-  /* In this case set the new pointer to the end of the record */
-  if( new_rec_ptr > w->bytes_total ){
-    new_rec_ptr = w->bytes_total;
-    printf("%s: Seeking past end of data\n",myname);fflush(stdout);
-    status = LIME_ERR_SEEK;
+  /* If bytes to skip is -ve, we need to worry about 
+   * seeking past the start of the buffer */
+  if( bytes_to_skip <  0 ) {
+    n_uint64_t minus_bytes = (n_uint64_t)(-bytes_to_skip);
+
+    if( minus_bytes > w->rec_ptr ) {
+      new_rec_ptr = 0;
+      printf("%s: Seeking before beginning end of data\n",myname);fflush(stdout);
+      status = LIME_ERR_SEEK;
+    }
+    else{
+      new_rec_ptr= w->rec_ptr + bytes_to_skip;
+    }
+  }
+  else {
+     /* Bytes to skip is >=0 */
+     new_rec_ptr = w->rec_ptr + bytes_to_skip;
+
+     /* Prevent skip past the end of the data */
+     /* In this case set the new pointer to the end of the record */
+     if( new_rec_ptr > w->bytes_total ){
+       new_rec_ptr = w->bytes_total;
+       printf("%s: Seeking past end of data\n",myname);fflush(stdout);
+       status = LIME_ERR_SEEK;
+     }
   }
 
-  /* Prevent skips before the beginning of the data */
-  /* In this case set the new pointer to the beginning of the record */
-  if(new_rec_ptr < 0){
-    new_rec_ptr = 0;
-    printf("%s: Seeking before beginning end of data\n",myname);fflush(stdout);
-    status = LIME_ERR_SEEK;
-  }
+  /* At this point we have either a SEEK_ERROR (past bounds) 
+   * Or SUCCESS. In either case we are duty bound to do the file-seek */
 
   /* Seek */
   offset = w->rec_start + new_rec_ptr;
-  if((off_t)offset != offset){
+  off_t narrow_offset = (off_t)offset;  // Narrow offset
+  if((n_uint64_t)narrow_offset != offset){
     printf("%s: Can't seek to %llu. off_t type too small\n",
 	   myname,(unsigned long long)offset);
-    return LIME_ERR_SEEK;
+    return LIME_ERR_SEEK; /* Can't seek here because the offset is crummy. Immediate return */
   }
-  status = DCAPL(fseeko)(w->fp, (off_t)offset, SEEK_SET);
 
-  if(status < 0){
-    printf("%s: fseek returned %d\n",myname,status);fflush(stdout);
-    return LIME_ERR_SEEK;
+  /* Carry out the seek */
+  seek_status = DCAPL(fseeko)(w->fp, (off_t)narrow_offset, SEEK_SET);
+  if(seek_status < 0){
+    printf("%s: fseek returned %d\n",myname,seek_status);fflush(stdout);
+    return LIME_ERR_SEEK; /* Actual seek failed */
   }
 
   /* Update the writer state */
   w->rec_ptr = new_rec_ptr;
-  
-  return LIME_SUCCESS;
+  return status;
 }
 
 int limeWriterSeek(LimeWriter *w, off_t offset, int whence)

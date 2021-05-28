@@ -4,7 +4,7 @@ project(C-Lime VERSION 2.53 LANGUAGES C)
 #Boiler Plate for installation
 include(GNUInstallDirs)
 include(CheckIncludeFile)
-include(CheckSymbolExists)
+include(CheckFunctionExists)
 include(CheckTypeSize)
 #Boiler Plate for Testing
 include(CTest)
@@ -24,7 +24,7 @@ endif()
 option(LIME_ENABLE_SANITIZERS "Enable Address and Undefined Behaviour Sanitizers" OFF)
 
 
-check_symbol_exists("fseeko" "stdio.h" HAVE_FSEEKO)
+check_function_exists("fseeko" HAVE_FSEEKO)
 check_include_file("stdint.h" HAVE_STDINT_H)
 check_include_file("memory.h" HAVE_MEMORY_H)
 check_include_file("inttypes.h" HAVE_INTTYPES_H)
