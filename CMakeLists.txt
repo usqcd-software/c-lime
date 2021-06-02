@@ -10,8 +10,6 @@ include(CheckTypeSize)
 include(CTest)
 
 #Options
-option(LIME_LARGEGFILE "Enable Large File Support" OFF)
-
 ### FIXME: Do we still need this?
 option(LIME_DCAP "Ebable DCache DCap Support" OFF)
 if( LIME_DCAP )
