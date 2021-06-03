@@ -20,7 +20,9 @@
 #include <string.h>
 #include <stdlib.h>
 #define MAXFILENAME 512
-#define MAXDIRNAME 512
+
+/* Allow dirname extnesion with filetypes etc up t 32 characters */
+#define MAXDIRNAME 480
 #define MAXCOMLINE 512
 #define MAXBUF 1048576
 
@@ -73,7 +75,7 @@ int main(int argc, char *argv[])
     fprintf(stderr,"Not enough room for directory name\n");
     return EXIT_FAILURE;
   }
-  snprintf(dirname,MAXDIRNAME,"%s.contents",limefile);
+  snprintf(dirname,MAXDIRNAME-strlen(".contents"),"%s.contents",limefile);
 
   if(strlen(dirname) + strlen("mkdir -p ") > MAXCOMLINE - 1){
     fprintf(stderr,"Not enough room for command line\n");

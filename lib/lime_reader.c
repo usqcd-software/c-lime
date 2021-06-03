@@ -212,12 +212,13 @@ int limeReaderCloseRecord(LimeReader *r)
   /* Advance to the beginning of the next record */
   offset = r->bytes_total - r->rec_ptr;
 
-  if((off_t)offset != offset){
+  off_t narrow_offset = (off_t)offset;
+  if((n_uint64_t)narrow_offset != offset){
     printf("%s: can't skip %llu bytes\n",myname,(long long unsigned)offset);
     return LIME_ERR_SEEK;
   }
 
-  status = skipReaderBytes(r, (off_t)offset);
+  status = skipReaderBytes(r, narrow_offset);
 
   return status;
 }
@@ -231,26 +232,32 @@ int limeReaderCloseRecord(LimeReader *r)
 int skipReaderBytes(LimeReader *r, off_t bytes_to_skip)
 {
   int status;
-  int64_t new_rec_ptr;
-  int64_t offset;
+  int seek_status;
+  n_uint64_t new_rec_ptr;
+  n_uint64_t offset;
   char myname[] = "skipReaderBytes";
 
+  status = LIME_SUCCESS;
+  if( bytes_to_skip >= 0 ) {
+    new_rec_ptr = r->rec_ptr + bytes_to_skip;
 
-  new_rec_ptr = r->rec_ptr + bytes_to_skip;
-
-  /* Prevent skip past the end of the data */
-  if( new_rec_ptr > r->bytes_total ){
-    new_rec_ptr = r->bytes_total;
-    printf("%s: Seeking past end of data\n",myname);fflush(stdout);
-    status = LIME_ERR_SEEK;
+    /* Prevent skip past the end of the data */
+    if( new_rec_ptr > r->bytes_total ){
+      new_rec_ptr = r->bytes_total;
+      printf("%s: Seeking past end of data\n",myname);fflush(stdout);
+      status = LIME_ERR_SEEK;
+    }
   }
-
-  /* Prevent skips before the beginning of the data */
-  /* In this case set the new pointer to the beginning of the record */
-  if(new_rec_ptr < 0){
-    new_rec_ptr = 0;
-    printf("%s: Seeking before beginning end of data\n",myname);fflush(stdout);
-    status = LIME_ERR_SEEK;
+  else { 
+    n_uint64_t minus_bytes = (n_uint64_t)(-bytes_to_skip);
+    if( minus_bytes > r->rec_ptr ) { 
+      new_rec_ptr = 0;
+      printf("%s: Seeking before beginning end of data\n",myname);fflush(stdout);
+      status = LIME_ERR_SEEK;
+    }
+    else { 
+      new_rec_ptr = r->rec_ptr + bytes_to_skip;
+    }
   }
 
   /* Seek */
@@ -262,23 +269,22 @@ int skipReaderBytes(LimeReader *r, off_t bytes_to_skip)
   }
 
   /* Guard against insufficient integer size */
-  if((off_t)offset != offset){
+  off_t narrow_offset = (off_t)offset;
+  if((n_uint64_t)narrow_offset != offset){
     printf("%s: fseeko can't seek to %llu. off_t too small.\n",
 	   myname,(unsigned long long)offset);
     return LIME_ERR_SEEK;
   }
+  seek_status = DCAPL(fseeko)(r->fp, narrow_offset , SEEK_SET);
 
-  status = DCAPL(fseeko)(r->fp, (off_t)offset , SEEK_SET);
-
-  if(status < 0){
-    printf("%s: fseek returned %d\n",myname,status);fflush(stdout);
+  if(seek_status < 0){
+    printf("%s: fseek returned %d\n",myname,seek_status);fflush(stdout);
     return LIME_ERR_SEEK;
   }
 
   /* Update the reader state */
   r->rec_ptr = new_rec_ptr;
-  
-  return LIME_SUCCESS;
+  return status; /* May be seek error on boundary overruns */
 }
 
 int limeReaderSeek(LimeReader *r, off_t offset, int whence)

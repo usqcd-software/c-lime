@@ -104,7 +104,8 @@ int write_rec(LimeWriter *writer, int MB_flag, int ME_flag, int shuffle,
 
 int main(int argc, char *argv[]) 
 {
-
+  _LIME_UNUSED_PARAM(argc);
+  _LIME_UNUSED_PARAM(argv);
   char lime_file[] = "lime_file_test";
 
   LimeWriter *writer;

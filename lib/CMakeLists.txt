@@ -14,6 +14,11 @@ target_include_directories(lime PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../include>
   $<INSTALL_INTERFACE:include>)
 
+target_compile_definitions(lime PUBLIC _LARGEFILE_SOURCE _FILE_OFFSET_BITS=64 )
+set_target_properties(lime PROPERTIES
+	                C_STANDARD 99
+			C_EXTENSIONS OFF)
+
 # generated includes
 target_include_directories(lime PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/../include>
