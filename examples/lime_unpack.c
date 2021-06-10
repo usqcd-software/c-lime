@@ -75,7 +75,7 @@ int main(int argc, char *argv[])
     fprintf(stderr,"Not enough room for directory name\n");
     return EXIT_FAILURE;
   }
-  snprintf(dirname,MAXDIRNAME-strlen(".contents"),"%s.contents",limefile);
+  snprintf(dirname,MAXDIRNAME,"%s.contents",limefile);
 
   if(strlen(dirname) + strlen("mkdir -p ") > MAXCOMLINE - 1){
     fprintf(stderr,"Not enough room for command line\n");
