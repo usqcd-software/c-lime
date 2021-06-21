@@ -73,7 +73,7 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/include/lime_config_internal.h DESTINA
 #write a Version file
 include(CMakePackageConfigHelpers)
 write_basic_package_version_file(
-    CLimeVersion.cmake
+    CLimeConfigVersion.cmake
     VERSION ${PACKAGE_VERSION}
     COMPATIBILITY AnyNewerVersion
     )
@@ -82,6 +82,6 @@ write_basic_package_version_file(
 # Using this macro we can pass some path vars down...
 # But we are not doing this for now.
 configure_package_config_file(CLimeConfig.cmake.in CLimeConfig.cmake INSTALL_DESTINATION lib/cmake/CLime)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/CLimeVersion.cmake ${CMAKE_CURRENT_BINARY_DIR}/CLimeConfig.cmake 
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/CLimeConfigVersion.cmake ${CMAKE_CURRENT_BINARY_DIR}/CLimeConfig.cmake 
         DESTINATION lib/cmake/CLime)
 
