@@ -238,7 +238,7 @@ int main(int argc, char *argv[])
 	  if ( next.ss_count <= 0 || next.eof ) ME_flag = 1;
 	    
 	  /* Announce file */
-	  printf("%2d %3d %8llu %s\n\t\t%s\n",
+	  printf("%2d %3d %8lu %s\n\t\t%s\n",
 		 msg, rec, bytes, curr.lime_type, curr.filename);
 
 	  /* Write header */
